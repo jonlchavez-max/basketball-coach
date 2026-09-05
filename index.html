@@ -3,690 +3,525 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#111827">
-<title>Basketball Coach — Game Day</title>
+<meta name="theme-color" content="#07111f">
+<title>Basketball Coach</title>
 <style>
 :root{
-  --bg:#f3f4f6;
-  --card:#ffffff;
-  --panel:#f8fafc;
-  --text:#111827;
-  --muted:#667085;
-  --border:#d0d5dd;
-  --accent:#2563eb;
-  --accent-soft:#dbeafe;
-  --off:#f59e0b;
-  --def:#60a5fa;
-  --ball:#f97316;
-  --move:#16a34a;
-  --danger:#dc2626;
+  --bg:#07111f;
+  --panel:#0d1b2a;
+  --panel2:#10243a;
+  --card:#13283d;
+  --line:#28445f;
+  --text:#f8fbff;
+  --muted:#9fb3c8;
+  --green:#35d07f;
+  --green2:#153d2c;
+  --gold:#f7c948;
+  --gold2:#493a12;
+  --red:#ff5d6c;
+  --red2:#481923;
+  --blue:#56a8ff;
+  --blue2:#123a63;
+  --orange:#ff9f43;
+  --court:#d6e3ef;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{
   margin:0;
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-  background:var(--bg);
+  background:linear-gradient(180deg,#06101d,#091728 45%,#07111f);
   color:var(--text);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
 }
-button{font:inherit;color:inherit;touch-action:manipulation}
-button:focus-visible{outline:3px solid #93c5fd;outline-offset:2px}
-.app{max-width:1000px;margin:0 auto;padding:10px 10px 28px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:18px}
-.topbar{
-  position:sticky;
-  top:0;
-  z-index:30;
-  background:rgba(243,244,246,.96);
-  backdrop-filter:blur(8px);
-  padding:6px 0 8px;
+button,input{font:inherit}
+button{color:inherit;touch-action:manipulation}
+button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.app{max-width:1180px;margin:0 auto;padding:12px 12px 30px}
+.topnav{
+  position:sticky;top:0;z-index:40;
+  background:rgba(7,17,31,.96);
+  backdrop-filter:blur(10px);
+  padding:8px 0 10px;
 }
-.score-strip{
-  display:grid;
-  grid-template-columns:1fr auto 1fr;
-  align-items:center;
-  gap:8px;
-  padding:9px 14px;
+.brandrow{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.brand{font-weight:950;letter-spacing:.08em}
+.subbrand{font-size:12px;color:var(--muted);font-weight:800}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tab{
+  min-height:54px;border:1px solid var(--line);border-radius:14px;
+  background:var(--panel);font-weight:950;letter-spacing:.04em
 }
-.side{text-align:center}
-.kicker{font-size:11px;font-weight:950;letter-spacing:.12em;color:var(--muted)}
-.mini-score{font-size:27px;font-weight:950;line-height:1.05}
-.mini-quarter{font-size:11px;font-weight:950;letter-spacing:.12em;text-align:center}
-.mini-clock{font-size:34px;font-weight:950;font-variant-numeric:tabular-nums;line-height:1;text-align:center}
-.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
-.tab,.play-btn,.tool,.score-btn,.quarter-btn,.sub-btn{
-  min-height:48px;
-  border:1px solid var(--border);
-  background:var(--card);
-  border-radius:14px;
-  font-weight:850;
-}
-.tab.active,.play-btn.active,.tool.active{background:var(--accent-soft);border-color:var(--accent)}
-.view{display:none;margin-top:12px}
+.tab.active{background:var(--blue2);border-color:var(--blue)}
+.view{display:none}
 .view.active{display:block}
 
 /* GAME */
-.game-grid{display:grid;grid-template-columns:1fr 1.25fr 1fr;gap:10px}
-.score-card,.clock-card{padding:14px;text-align:center}
-.big-score{font-size:56px;font-weight:950;margin:6px 0 10px}
-.score-actions,.clock-actions,.quarter-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.game-clock{font-size:68px;font-weight:950;font-variant-numeric:tabular-nums;line-height:1.05;margin:8px 0}
-.game-quarter{font-weight:950}
-.quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
-.note{padding:10px 12px;margin-top:10px;text-align:center;font-size:14px;font-weight:750}
-.clock-rule{margin-top:8px;font-size:13px;color:var(--muted);font-weight:700}
-.clock-alert{margin-top:8px;padding:8px;border-radius:10px;border:1px solid var(--border);font-weight:900;display:none}
-.clock-alert.show{display:block;background:#fef3c7;border-color:#f59e0b}
+.clock-shell{
+  border:1px solid var(--line);border-radius:20px;background:rgba(13,27,42,.94);
+  padding:14px;margin-top:8px
+}
+.quarters{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.qbtn{
+  min-height:44px;border:1px solid var(--line);border-radius:12px;background:#0a1726;
+  color:var(--muted);font-weight:950
+}
+.qbtn.active{background:var(--green2);border-color:var(--green);color:var(--text)}
+.clockgrid{display:grid;grid-template-columns:1fr 1.45fr 1fr;gap:12px;align-items:stretch}
+.scorebox,.clockbox{border:1px solid var(--line);border-radius:18px;background:var(--panel2);padding:14px;text-align:center}
+.kicker{font-size:11px;letter-spacing:.14em;color:var(--muted);font-weight:950}
+.score{font-size:58px;font-weight:950;line-height:1.05;margin:8px 0}
+.scorecontrols{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn{
+  min-height:46px;border:1px solid var(--line);border-radius:12px;background:#0b1929;font-weight:900
+}
+.btn.primary{background:var(--green2);border-color:var(--green)}
+.btn.warn{background:var(--gold2);border-color:var(--gold)}
+.btn.danger{background:var(--red2);border-color:var(--red)}
+.gameclock{font-size:76px;line-height:1;font-weight:950;font-variant-numeric:tabular-nums;margin:10px 0}
+.clocktools{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.statusline{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px}
+.statuspill{border:1px solid var(--line);border-radius:999px;padding:7px 11px;font-size:12px;font-weight:900;color:var(--muted)}
+.statuspill.live{color:var(--green);border-color:var(--green)}
+.message{min-height:22px;text-align:center;color:var(--gold);font-weight:900;margin-top:8px}
 
-/* PLAYS */
+.roster-title{display:flex;justify-content:space-between;gap:10px;align-items:end;margin:16px 2px 8px}
+.roster-title h2{font-size:18px;margin:0;letter-spacing:.08em}
+.roster-title span{color:var(--muted);font-size:12px;font-weight:800}
+.roster{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.player{
+  border:1px solid var(--line);border-radius:16px;background:var(--card);padding:12px;
+  display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;text-align:left;
+  min-height:92px
+}
+.player.on{border-color:var(--green);background:linear-gradient(180deg,#123429,#10291f)}
+.player.need{border-color:var(--red)}
+.num{
+  width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+  background:#0a1726;border:1px solid var(--line);font-weight:950;font-size:18px
+}
+.pname{font-size:18px;font-weight:950}
+.pmeta{font-size:12px;color:var(--muted);margin-top:3px}
+.state{
+  border-radius:999px;padding:6px 9px;font-size:11px;font-weight:950;
+  border:1px solid var(--line);white-space:nowrap
+}
+.player.on .state{color:var(--green);border-color:var(--green);background:var(--green2)}
+.player:not(.on) .state{color:var(--gold);border-color:var(--gold);background:var(--gold2)}
+.mins{grid-column:2 / 4;display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--muted)}
+.mins strong{color:var(--text)}
+.needtxt{color:var(--red)!important}
+.met{color:var(--green)!important}
+.gamefooter{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+
+/* CLIPBOARD */
+.clip-wrap{margin-top:8px}
 .play-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.play-btn{text-align:left;padding:10px 12px}
-.play-btn small{display:block;color:var(--muted);font-weight:650;margin-top:2px}
+.play-btn{
+  min-height:58px;border:1px solid var(--line);border-radius:14px;background:var(--panel);
+  text-align:left;padding:10px 12px;font-weight:950
+}
+.play-btn small{display:block;color:var(--muted);font-weight:700;margin-top:2px}
+.play-btn.active{background:var(--blue2);border-color:var(--blue)}
 .tools{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
-.tool{padding:0 14px}
-.banner{padding:12px;text-align:center;font-size:20px;font-weight:950;letter-spacing:.12em;margin:10px 0}
-.play-card{padding:12px}
-.play-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:8px}
-.play-title{font-size:22px;font-weight:950}
-.play-sub{font-size:14px;color:var(--muted)}
-.call{border:1px solid var(--border);border-radius:12px;padding:9px 12px;font-weight:950;white-space:nowrap}
-.stage{position:relative;overflow:hidden;border:1px solid var(--border);border-radius:14px;background:var(--panel)}
+.tool{min-height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:var(--panel);font-weight:900}
+.tool.active{background:var(--green2);border-color:var(--green)}
+.playcard{border:1px solid var(--line);border-radius:18px;background:var(--panel);padding:12px}
+.playhead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px}
+.playtitle{font-size:22px;font-weight:950}
+.playsub{font-size:13px;color:var(--muted)}
+.call{border:1px solid var(--line);border-radius:12px;padding:8px 11px;background:#0a1726;font-weight:950;white-space:nowrap}
+.stage{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:14px;background:#eef4f8}
 .stage svg{display:block;width:100%;height:auto}
 .draw-canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;pointer-events:none}
 .draw-canvas.on{pointer-events:auto;cursor:crosshair}
-.kid-rule{margin-top:9px;border:1px solid var(--border);border-radius:12px;padding:11px;text-align:center;font-size:18px;font-weight:950}
-details{margin-top:10px;padding:12px}
-summary{font-weight:900;cursor:pointer}
-.reminders{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
-.reminder{border:1px solid var(--border);border-radius:12px;padding:10px;font-size:14px}
+.rule{margin-top:9px;border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center;font-weight:950;background:#0a1726}
+.reminders{margin-top:10px;border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:12px}
+.reminders summary{cursor:pointer;font-weight:950}
+.remindergrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.reminder{border:1px solid var(--line);border-radius:10px;padding:9px;font-size:13px;color:var(--muted)}
+.reminder b{color:var(--text)}
 
-/* ROTATIONS */
-.rotation-top{padding:14px}
-.oncourt{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:10px}
-.player-card{border:1px solid var(--border);border-radius:12px;padding:10px;text-align:center}
-.rotation-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-.rotation-box{padding:14px}
-.pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-.pill{border:1px solid var(--border);border-radius:999px;padding:8px 14px;font-weight:800}
-.sub-btn{width:100%;margin-top:10px}
+/* SVG */
+.court{fill:none;stroke:#2b3c4d;stroke-width:2}
+.off{fill:#ffb347;stroke:#1f2a35;stroke-width:2.5}
+.def{fill:#6bb6ff;stroke:#1f2a35;stroke-width:2.5}
+.ball{fill:#f97316;stroke:#1f2a35;stroke-width:2}
+.move{fill:none;stroke:#16a34a;stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
+.pt{fill:#111827;font:900 18px system-ui;text-anchor:middle;dominant-baseline:middle}
+.lbl{fill:#1f2937;font:800 13px system-ui;text-anchor:middle}
+.big{fill:#111827;font:900 20px system-ui;text-anchor:middle}
 
-/* COURT SVG */
-.court{fill:none;stroke:var(--text);stroke-width:2}
-.off{fill:var(--off);stroke:var(--text);stroke-width:2.5}
-.def{fill:var(--def);stroke:var(--text);stroke-width:2.5}
-.ball{fill:var(--ball);stroke:var(--text);stroke-width:2}
-.move{fill:none;stroke:var(--move);stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
-.bad{fill:none;stroke:var(--danger);stroke-width:7;stroke-linecap:round}
-.pt{fill:var(--text);font:900 18px system-ui;text-anchor:middle;dominant-baseline:middle}
-.lbl{fill:var(--text);font:800 13px system-ui;text-anchor:middle}
-.big{fill:var(--text);font:900 20px system-ui;text-anchor:middle}
-
-@media (max-width:720px){
-  .app{padding:8px 8px 22px}
-  .mini-clock{font-size:30px}
-  .game-grid{grid-template-columns:1fr 1fr}
-  .clock-card{grid-column:1/-1;grid-row:1}
-  .game-clock{font-size:60px}
-  .quick-grid{grid-template-columns:repeat(2,1fr)}
+@media(max-width:820px){
+  .clockgrid{grid-template-columns:1fr 1fr}
+  .clockbox{grid-column:1/-1;grid-row:1}
+  .gameclock{font-size:66px}
   .play-grid{grid-template-columns:repeat(2,1fr)}
-  .reminders{grid-template-columns:repeat(2,1fr)}
-  .rotation-grid{grid-template-columns:1fr}
 }
-@media (max-width:420px){
-  .tab{font-size:13px}
-  .score-strip{padding:8px}
-  .mini-score{font-size:24px}
-  .mini-clock{font-size:28px}
-  .play-head{display:block}
-  .call{display:inline-block;margin-top:8px}
-  .player-card{padding:8px 4px;font-size:13px}
+@media(max-width:620px){
+  .app{padding:8px 8px 22px}
+  .roster{grid-template-columns:1fr}
+  .clockgrid{grid-template-columns:1fr 1fr}
+  .score{font-size:46px}
+  .gameclock{font-size:58px}
+  .clocktools{grid-template-columns:1fr 1fr}
+  .remindergrid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:390px){
+  .player{grid-template-columns:auto 1fr}
+  .state{grid-column:2;justify-self:start}
+  .mins{grid-column:1/-1}
 }
 </style>
 </head>
 <body>
 <div class="app">
-
-  <div class="topbar">
-    <div class="card score-strip">
-      <div class="side">
-        <div class="kicker">US</div>
-        <div id="miniUs" class="mini-score">0</div>
-      </div>
+  <div class="topnav">
+    <div class="brandrow">
       <div>
-        <div id="miniQuarter" class="mini-quarter">Q1</div>
-        <div id="miniClock" class="mini-clock">10:00</div>
+        <div class="brand">BASKETBALL COACH</div>
+        <div class="subbrand">3RD GRADE • GAME DAY</div>
       </div>
-      <div class="side">
-        <div class="kicker">THEM</div>
-        <div id="miniThem" class="mini-score">0</div>
-      </div>
+      <div id="saveState" class="subbrand">AUTO-SAVED</div>
     </div>
-
     <div class="tabs">
       <button class="tab active" data-tab="game">🏀 GAME</button>
-      <button class="tab" data-tab="plays">📋 PLAYS</button>
-      <button class="tab" data-tab="rotations">🔄 ROTATIONS</button>
+      <button class="tab" data-tab="clipboard">📋 CLIPBOARD</button>
     </div>
   </div>
 
   <section id="gameView" class="view active">
-    <div class="game-grid">
-      <div class="card score-card">
-        <div class="kicker">US</div>
-        <div id="gameUs" class="big-score">0</div>
-        <div class="score-actions">
-          <button class="score-btn" id="usMinus">−1</button>
-          <button class="score-btn" id="usPlus">+1</button>
-        </div>
+    <div class="clock-shell">
+      <div class="quarters">
+        <button class="qbtn active" data-q="1">Q1</button>
+        <button class="qbtn" data-q="2">Q2</button>
+        <button class="qbtn" data-q="3">Q3</button>
+        <button class="qbtn" data-q="4">Q4</button>
       </div>
 
-      <div class="card clock-card">
-        <div id="gameQuarter" class="game-quarter">QUARTER 1</div>
-        <div id="gameClock" class="game-clock">10:00</div>
-        <div class="clock-actions">
-          <button class="score-btn" id="startClock">▶ START</button>
-          <button class="score-btn" id="resetClock">↺ 10:00</button>
+      <div class="clockgrid">
+        <div class="scorebox">
+          <div class="kicker">US</div>
+          <div id="usScore" class="score">0</div>
+          <div class="scorecontrols">
+            <button id="usMinus" class="btn">−1</button>
+            <button id="usPlus" class="btn">+1</button>
+          </div>
         </div>
-        <div class="quarter-actions" style="margin-top:8px">
-          <button class="quarter-btn" id="prevQ">← Quarter</button>
-          <button class="quarter-btn" id="nextQ">Quarter →</button>
-        </div>
-        <div class="clock-rule">Running clock. Official clock stops in the final 2:00 of Q2 & Q4.</div>
-        <div id="clockAlert" class="clock-alert">⏱️ LAST 2:00 — OFFICIAL CLOCK STOPS</div>
-      </div>
 
-      <div class="card score-card">
-        <div class="kicker">THEM</div>
-        <div id="gameThem" class="big-score">0</div>
-        <div class="score-actions">
-          <button class="score-btn" id="themMinus">−1</button>
-          <button class="score-btn" id="themPlus">+1</button>
+        <div class="clockbox">
+          <div class="kicker" id="halfLabel">1ST HALF • Q1</div>
+          <div id="gameClock" class="gameclock">10:00</div>
+          <div class="clocktools">
+            <button id="minus10" class="btn">−10s</button>
+            <button id="runBtn" class="btn primary">▶ START</button>
+            <button id="plus10" class="btn">+10s</button>
+            <button id="resetClock" class="btn warn">RESET</button>
+          </div>
+          <div class="statusline">
+            <span id="runStatus" class="statuspill">PAUSED</span>
+            <span class="statuspill">5:00 REQUIRED / HALF</span>
+            <span id="countStatus" class="statuspill">5 ON COURT</span>
+          </div>
+          <div id="message" class="message"></div>
+        </div>
+
+        <div class="scorebox">
+          <div class="kicker">THEM</div>
+          <div id="themScore" class="score">0</div>
+          <div class="scorecontrols">
+            <button id="themMinus" class="btn">−1</button>
+            <button id="themPlus" class="btn">+1</button>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="quick-grid">
-      <button class="score-btn quickPlay" data-playjump="inbound">🚀 Inbound</button>
-      <button class="score-btn quickPlay" data-playjump="motion">🏃 Pass + Cut</button>
-      <button class="score-btn quickPlay" data-playjump="zone">🛡️ 2-1-2</button>
-      <button class="score-btn quickPlay" data-playjump="trap">🔥 Trap</button>
+    <div class="roster-title">
+      <h2>PLAYERS</h2>
+      <span>Tap a player to move ON COURT / BENCH • 5 max</span>
     </div>
+    <div id="roster" class="roster"></div>
 
-    <div class="card note">3rd Grade: 4 × 10-minute quarters • No backcourt defensive pressure • 27.5&quot; ball</div>
+    <div class="gamefooter">
+      <button id="resetGame" class="btn danger">RESET GAME</button>
+      <button id="saveGame" class="btn primary">SAVE GAME</button>
+    </div>
   </section>
 
-  <section id="playsView" class="view">
-    <div class="play-grid">
-      <button class="play-btn active" data-play="spots"><b>OFFENSE</b><small>Starting Spots</small></button>
-      <button class="play-btn" data-play="motion"><b>OFFENSE</b><small>Pass + Cut</small></button>
-      <button class="play-btn" data-play="inbound"><b>INBOUND</b><small>Go Downcourt</small></button>
-      <button class="play-btn" data-play="zone"><b>DEFENSE</b><small>2-1-2 Setup</small></button>
-      <button class="play-btn" data-play="slide"><b>DEFENSE</b><small>Zone Slide</small></button>
-      <button class="play-btn" data-play="trap"><b>DEFENSE</b><small>Double-Team</small></button>
-    </div>
+  <section id="clipboardView" class="view">
+    <div class="clip-wrap">
+      <div class="play-grid">
+        <button class="play-btn active" data-play="spots">OFFENSE<small>Starting Spots</small></button>
+        <button class="play-btn" data-play="motion">OFFENSE<small>Pass + Cut</small></button>
+        <button class="play-btn" data-play="inbound">INBOUND<small>Go Downcourt</small></button>
+        <button class="play-btn" data-play="zone">DEFENSE<small>2-1-2 Zone</small></button>
+        <button class="play-btn" data-play="slide">DEFENSE<small>Zone Slide</small></button>
+        <button class="play-btn" data-play="trap">DEFENSE<small>Double-Team</small></button>
+      </div>
 
-    <div class="tools">
-      <button class="tool" id="drawToggle">✏️ Draw</button>
-      <button class="tool" id="drawUndo">↶ Undo</button>
-      <button class="tool" id="drawClear">Clear Marks</button>
-    </div>
+      <div class="tools">
+        <button id="drawToggle" class="tool">✏️ DRAW</button>
+        <button id="drawUndo" class="tool">↶ UNDO</button>
+        <button id="drawClear" class="tool">CLEAR</button>
+      </div>
 
-    <div id="banner" class="card banner">OFFENSE</div>
-
-    <div class="card play-card">
-      <div class="play-head">
-        <div>
-          <div id="playTitle" class="play-title">STARTING SPOTS</div>
-          <div id="playSub" class="play-sub">Get to your spot, then move.</div>
+      <div class="playcard">
+        <div class="playhead">
+          <div>
+            <div id="playTitle" class="playtitle">STARTING SPOTS</div>
+            <div id="playSub" class="playsub">Get to your spot. Then move.</div>
+          </div>
+          <div id="playCall" class="call">“SPOTS!”</div>
         </div>
-        <div id="playCall" class="call">“SPOTS!”</div>
-      </div>
 
-      <div id="stage" class="stage">
-        <div id="diagram"></div>
-        <canvas id="drawCanvas" class="draw-canvas" aria-label="Finger drawing layer"></canvas>
-      </div>
-
-      <div id="playRule" class="kid-rule">1 TOP • 2 & 3 WINGS • 4 & 5 BIGS</div>
-    </div>
-
-    <details class="card">
-      <summary>TEAM REMINDERS</summary>
-      <div class="reminders">
-        <div class="reminder"><b>🏀 No double dribble</b><br>Pick up = pass or shoot.</div>
-        <div class="reminder"><b>🙌 Hands up</b><br>Make yourself big.</div>
-        <div class="reminder"><b>🏃 Keep moving</b><br>Never stand and watch.</div>
-        <div class="reminder"><b>➡️ Come to the ball</b><br>Step toward the pass.</div>
-        <div class="reminder"><b>🎯 No lobs</b><br>Chest or bounce passes.</div>
-        <div class="reminder"><b>💪 4 & 5 rebound</b><br>Crash the boards.</div>
-      </div>
-    </details>
-  </section>
-
-  <section id="rotationsView" class="view">
-    <div class="card rotation-top">
-      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
-        <div>
-          <div style="font-size:19px;font-weight:950">ON THE COURT</div>
-          <div style="font-size:14px;color:var(--muted)">Player names can replace these later.</div>
+        <div id="stage" class="stage">
+          <div id="diagram"></div>
+          <canvas id="drawCanvas" class="draw-canvas" aria-label="Finger drawing layer"></canvas>
         </div>
-        <div class="pill">5 PLAYERS</div>
+
+        <div id="playRule" class="rule">1 TOP • 2 & 3 WINGS • 4 & 5 BIGS</div>
       </div>
 
-      <div class="oncourt">
-        <div class="player-card"><b>1</b><br><small>Guard</small></div>
-        <div class="player-card"><b>2</b><br><small>Wing</small></div>
-        <div class="player-card"><b>3</b><br><small>Wing</small></div>
-        <div class="player-card"><b>4</b><br><small>Big</small></div>
-        <div class="player-card"><b>5</b><br><small>Big</small></div>
-      </div>
-    </div>
-
-    <div class="rotation-grid">
-      <div class="card rotation-box">
-        <b>BENCH</b>
-        <div class="pills">
-          <span class="pill">6</span><span class="pill">7</span><span class="pill">8</span><span class="pill">9</span>
+      <details class="reminders">
+        <summary>TEAM REMINDERS</summary>
+        <div class="remindergrid">
+          <div class="reminder"><b>🏀 NO DOUBLE DRIBBLE</b><br>Pick up = pass or shoot.</div>
+          <div class="reminder"><b>🙌 HANDS UP</b><br>Make yourself big.</div>
+          <div class="reminder"><b>🏃 KEEP MOVING</b><br>Never stand and watch.</div>
+          <div class="reminder"><b>➡️ COME TO BALL</b><br>Step toward the pass.</div>
+          <div class="reminder"><b>🎯 NO LOBS</b><br>Chest or bounce pass.</div>
+          <div class="reminder"><b>💪 BIGS REBOUND</b><br>4 & 5 crash the boards.</div>
         </div>
-      </div>
-
-      <div class="card rotation-box">
-        <b>NEXT CHANGE</b>
-        <div style="margin-top:8px;font-size:20px;font-weight:950">6 & 7 IN</div>
-        <div style="color:var(--muted)">2 & 3 OUT</div>
-        <button class="sub-btn" type="button">✓ MAKE SUBSTITUTION</button>
-      </div>
+      </details>
     </div>
-
-    <div class="card note"><b>Next step:</b> plug in your real roster and track minutes so everybody hits the Fieldhouse minimum playing time.</div>
   </section>
 </div>
 
 <script>
 (() => {
-  const $ = s => document.querySelector(s);
-  const $$ = s => [...document.querySelectorAll(s)];
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
 
-  // GAME STATE
-  let quarter = 1;
-  let seconds = 600;
-  let running = false;
-  let timer = null;
-  let targetEnd = 0;
-  let us = 0;
-  let them = 0;
+const rosterSeed = [
+  {n:1,name:'ZANE',role:'Guard',on:true},
+  {n:2,name:'VIVAAN',role:'Wing',on:true},
+  {n:3,name:'NIAM',role:'Wing',on:false},
+  {n:4,name:'NHONEBONG',role:'Big',on:false},
+  {n:5,name:'SIDARTH',role:'Big',on:true},
+  {n:6,name:'ETHAN',role:'Wing',on:true},
+  {n:7,name:'MAX',role:'Wing',on:true},
+  {n:8,name:'JONAH',role:'Guard',on:false},
+  {n:9,name:'JUSTIN',role:'Wing',on:false},
+  {n:10,name:'KREW',role:'Big',on:false}
+];
 
-  const miniClock = $('#miniClock');
-  const gameClock = $('#gameClock');
-  const miniQ = $('#miniQuarter');
-  const gameQ = $('#gameQuarter');
-  const miniUs = $('#miniUs');
-  const miniThem = $('#miniThem');
-  const gameUs = $('#gameUs');
-  const gameThem = $('#gameThem');
-  const clockAlert = $('#clockAlert');
+let state = {
+  q:1,
+  sec:600,
+  us:0,
+  them:0,
+  running:false,
+  players:rosterSeed.map(p=>({...p,qSec:[0,0,0,0],halfSec:[0,0]}))
+};
 
-  function fmt(s){
-    s = Math.max(0, Math.round(s));
-    return Math.floor(s/60) + ':' + String(s%60).padStart(2,'0');
-  }
-
-  function sync(){
-    miniClock.textContent = gameClock.textContent = fmt(seconds);
-    miniQ.textContent = 'Q' + quarter;
-    gameQ.textContent = 'QUARTER ' + quarter;
-    miniUs.textContent = gameUs.textContent = us;
-    miniThem.textContent = gameThem.textContent = them;
-    const lastTwo = (quarter === 2 || quarter === 4) && seconds <= 120;
-    clockAlert.classList.toggle('show', lastTwo);
-  }
-
-  function stopClock(){
-    running = false;
-    if(timer){
-      clearInterval(timer);
-      timer = null;
+try{
+  const saved = localStorage.getItem('basketballCoachStateV2');
+  if(saved){
+    const parsed = JSON.parse(saved);
+    if(parsed && parsed.players && parsed.players.length===10){
+      state = {...state,...parsed,running:false};
     }
-    $('#startClock').textContent = '▶ START';
   }
+}catch(e){}
 
-  function tick(){
-    if(!running) return;
-    seconds = Math.max(0, Math.ceil((targetEnd - Date.now()) / 1000));
-    sync();
-    if(seconds <= 0) stopClock();
+let timer=null;
+let lastTick=0;
+let saveFlash=null;
+
+function saveState(){
+  try{
+    localStorage.setItem('basketballCoachStateV2',JSON.stringify({...state,running:false}));
+    $('#saveState').textContent='SAVED';
+    clearTimeout(saveFlash);
+    saveFlash=setTimeout(()=>$('#saveState').textContent='AUTO-SAVED',900);
+  }catch(e){}
+}
+function fmt(s){
+  s=Math.max(0,Math.round(s));
+  return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+}
+function currentHalf(){return state.q<=2?0:1}
+function onCount(){return state.players.filter(p=>p.on).length}
+
+function renderGame(){
+  $('#usScore').textContent=state.us;
+  $('#themScore').textContent=state.them;
+  $('#gameClock').textContent=fmt(state.sec);
+  $('#halfLabel').textContent=(state.q<=2?'1ST HALF':'2ND HALF')+' • Q'+state.q;
+  $('#runStatus').textContent=state.running?'RUNNING':'PAUSED';
+  $('#runStatus').classList.toggle('live',state.running);
+  $('#countStatus').textContent=onCount()+' ON COURT';
+  $('#runBtn').textContent=state.running?'⏸ PAUSE':'▶ START';
+  $$('.qbtn').forEach(b=>b.classList.toggle('active',Number(b.dataset.q)===state.q));
+  renderRoster();
+}
+function renderRoster(){
+  const half=currentHalf();
+  $('#roster').innerHTML=state.players.map((p,i)=>{
+    const halfSec=p.halfSec[half];
+    const need=Math.max(0,300-halfSec);
+    const met=halfSec>=300;
+    const cls=`player ${p.on?'on':''} ${!met && state.q%2===0 && state.sec<300 ? 'need':''}`;
+    return `<button class="${cls}" data-player="${i}" type="button">
+      <span class="num">#${p.n}</span>
+      <span>
+        <span class="pname">${p.name}</span>
+        <span class="pmeta">${p.role}</span>
+      </span>
+      <span class="state">${p.on?'ON COURT':'BENCH'}</span>
+      <span class="mins">
+        <span>THIS QUARTER <strong>${fmt(p.qSec[state.q-1])}</strong></span>
+        <span class="${met?'met':(need>0?'needtxt':'')}">${met?'MINIMUM MET':'NEEDS '+fmt(need)}</span>
+      </span>
+    </button>`;
+  }).join('');
+  $$('#roster .player').forEach(btn=>btn.addEventListener('click',()=>togglePlayer(Number(btn.dataset.player))));
+}
+function togglePlayer(i){
+  const p=state.players[i];
+  if(!p.on && onCount()>=5){
+    $('#message').textContent='5 ON COURT MAX — take someone out first.';
+    setTimeout(()=>$('#message').textContent='',1800);
+    return;
   }
-
-  $('#startClock').addEventListener('click', () => {
-    if(running){
-      tick();
-      stopClock();
-      return;
-    }
-    running = true;
-    targetEnd = Date.now() + seconds * 1000;
-    $('#startClock').textContent = '⏸ PAUSE';
-    timer = setInterval(tick, 250);
-  });
-
-  $('#resetClock').addEventListener('click', () => {
-    stopClock();
-    seconds = 600;
-    sync();
-  });
-
-  $('#prevQ').addEventListener('click', () => {
-    stopClock();
-    quarter = Math.max(1, quarter - 1);
-    seconds = 600;
-    sync();
-  });
-
-  $('#nextQ').addEventListener('click', () => {
-    stopClock();
-    quarter = Math.min(4, quarter + 1);
-    seconds = 600;
-    sync();
-  });
-
-  $('#usPlus').addEventListener('click', () => { us++; sync(); });
-  $('#usMinus').addEventListener('click', () => { us = Math.max(0, us-1); sync(); });
-  $('#themPlus').addEventListener('click', () => { them++; sync(); });
-  $('#themMinus').addEventListener('click', () => { them = Math.max(0, them-1); sync(); });
-
-  // TABS
-  function openTab(name){
-    $$('.view').forEach(v => v.classList.toggle('active', v.id === name + 'View'));
-    $$('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
-    if(name === 'plays') requestAnimationFrame(sizeCanvas);
-  }
-
-  $$('.tab').forEach(b => b.addEventListener('click', () => openTab(b.dataset.tab)));
-
-  // PLAY DIAGRAMS
-  const defs = `<defs>
-    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
-      <path d="M0,0 L0,6 L9,3 z" fill="var(--move)"/>
-    </marker>
-  </defs>`;
-
-  function P(x,y,n,c='off'){
-    return `<circle cx="${x}" cy="${y}" r="26" class="${c}"/><text x="${x}" y="${y+1}" class="pt">${n}</text>`;
-  }
-
-  function B(x,y){
-    return `<circle cx="${x}" cy="${y}" r="10" class="ball"/>`;
-  }
-
-  function A(x1,y1,x2,y2){
-    return `<path d="M${x1} ${y1} L${x2} ${y2}" class="move" marker-end="url(#arr)"/>`;
-  }
-
-  function half(extra=''){
-    return `<svg viewBox="0 0 500 470" role="img" aria-label="Half court basketball diagram">
-      ${defs}
-      <rect x="8" y="8" width="484" height="454" class="court"/>
-      <rect x="190" y="282" width="120" height="180" class="court"/>
-      <circle cx="250" cy="282" r="60" class="court"/>
-      <path d="M38 462 L38 365 M462 462 L462 365 M38 365 A212 212 0 0 1 462 365" class="court"/>
-      <line x1="220" y1="420" x2="280" y2="420" class="court"/>
-      <circle cx="250" cy="408" r="9" class="court"/>
-      ${extra}
-    </svg>`;
-  }
-
-  function full(extra=''){
-    return `<svg viewBox="0 0 500 760" role="img" aria-label="Full court basketball diagram">
-      ${defs}
-      <rect x="8" y="8" width="484" height="744" class="court"/>
-      <line x1="8" y1="380" x2="492" y2="380" class="court"/>
-      <circle cx="250" cy="380" r="58" class="court"/>
-      <rect x="190" y="572" width="120" height="180" class="court"/>
-      <circle cx="250" cy="572" r="60" class="court"/>
-      <line x1="220" y1="710" x2="280" y2="710" class="court"/>
-      <circle cx="250" cy="698" r="9" class="court"/>
-      <rect x="190" y="8" width="120" height="180" class="court"/>
-      <circle cx="250" cy="188" r="60" class="court"/>
-      <line x1="220" y1="50" x2="280" y2="50" class="court"/>
-      <circle cx="250" cy="62" r="9" class="court"/>
-      ${extra}
-    </svg>`;
-  }
-
-  const plays = {
-    spots:{
-      section:'OFFENSE',
-      title:'STARTING SPOTS',
-      sub:'Get to your spot, then move.',
-      call:'“SPOTS!”',
-      rule:'1 TOP • 2 & 3 WINGS • 4 & 5 BIGS',
-      svg:()=>half(`
-        <text x="250" y="48" class="big">OFFENSE</text>
-        ${P(250,120,'1')}${P(100,220,'2')}${P(400,220,'3')}${P(165,380,'4')}${P(335,380,'5')}${B(278,120)}
-        <text x="250" y="168" class="lbl">POINT</text>
-        <text x="100" y="265" class="lbl">WING</text>
-        <text x="400" y="265" class="lbl">WING</text>
-        <text x="165" y="425" class="lbl">BIG</text>
-        <text x="335" y="425" class="lbl">BIG</text>
-      `)
-    },
-    motion:{
-      section:'OFFENSE',
-      title:'PASS + CUT',
-      sub:'Pass, cut, then fill the empty spot.',
-      call:'“PASS & CUT!”',
-      rule:'PASS → CUT → FILL EMPTY SPOT',
-      svg:()=>half(`
-        <text x="250" y="48" class="big">PASS + CUT</text>
-        ${P(250,120,'1')}${P(100,220,'2')}${P(400,220,'3')}${P(165,380,'4')}${P(335,380,'5')}${B(130,220)}
-        ${A(250,150,205,325)}
-        ${A(400,245,285,145)}
-        <text x="250" y="190" class="lbl">1 CUTS</text>
-        <text x="340" y="120" class="lbl">3 FILLS TOP</text>
-        <text x="250" y="445" class="lbl">4 & 5 STAY LOW + REBOUND</text>
-      `)
-    },
-    inbound:{
-      section:'OFFENSE',
-      title:'INBOUND — GO!',
-      sub:'One inbounder. Everyone else sprints and spreads.',
-      call:'“GO!”',
-      rule:'ONE STAYS • FOUR GO',
-      svg:()=>full(`
-        ${P(250,705,'1')}${B(282,705)}
-        ${P(200,640,'2')}${P(300,640,'3')}${P(160,600,'4')}${P(340,600,'5')}
-        ${A(200,610,95,290)}
-        ${A(300,610,405,290)}
-        ${A(160,570,165,180)}
-        ${A(340,570,335,180)}
-        <text x="250" y="545" class="big">DON'T HUDDLE AT BALL</text>
-        <text x="250" y="250" class="big">SPRINT + SPREAD</text>
-      `)
-    },
-    zone:{
-      section:'DEFENSE',
-      title:'2-1-2 ZONE',
-      sub:'Set after the ball crosses half court.',
-      call:'“ZONE!”',
-      rule:'2 UP • 1 MIDDLE • 2 LOW',
-      svg:()=>half(`
-        <text x="250" y="48" class="big">2-1-2 ZONE</text>
-        ${P(160,165,'1','def')}${P(340,165,'2','def')}${P(250,275,'3','def')}${P(155,390,'4','def')}${P(345,390,'5','def')}
-        <text x="250" y="90" class="lbl">WAIT UNTIL BALL CROSSES HALF COURT</text>
-        <text x="250" y="445" class="lbl">4 & 5 BOX OUT + REBOUND</text>
-      `)
-    },
-    slide:{
-      section:'DEFENSE',
-      title:'ZONE SLIDE',
-      sub:'Ball moves, everybody moves.',
-      call:'“SLIDE!”',
-      rule:'BALL MOVES → WE MOVE',
-      svg:()=>half(`
-        <text x="250" y="48" class="big">BALL LEFT</text>
-        ${B(85,210)}
-        ${P(160,165,'1','def')}${P(340,165,'2','def')}${P(250,275,'3','def')}${P(155,390,'4','def')}${P(345,390,'5','def')}
-        ${A(160,165,120,205)}
-        ${A(340,165,285,190)}
-        ${A(250,275,205,290)}
-        ${A(155,390,125,375)}
-        ${A(345,390,300,390)}
-        <text x="250" y="445" class="lbl">SLIDE TO BALL • KEEP BASKET PROTECTED</text>
-      `)
-    },
-    trap:{
-      section:'DEFENSE',
-      title:'DOUBLE-TEAM',
-      sub:'After half court: closest two go to the ball.',
-      call:'“TRAP!”',
-      rule:'2 TO BALL • 3 PROTECT',
-      svg:()=>half(`
-        <text x="250" y="48" class="big">DOUBLE-TEAM</text>
-        ${B(105,215)}
-        ${P(145,210,'1','def')}${P(195,255,'3','def')}${P(345,170,'2','def')}${P(160,390,'4','def')}${P(340,390,'5','def')}
-        ${A(345,195,285,230)}
-        <text x="170" y="165" class="lbl">1 + 3 GO BALL</text>
-        <text x="345" y="135" class="lbl">2 TAKES NEXT PASS</text>
-        <text x="250" y="335" class="lbl">4 & 5 PROTECT BASKET</text>
-        <text x="250" y="445" class="lbl">HANDS UP • NO REACHING</text>
-      `)
-    }
-  };
-
-  let currentPlay = 'spots';
-
-  const diagram = $('#diagram');
-  const playTitle = $('#playTitle');
-  const playSub = $('#playSub');
-  const playCall = $('#playCall');
-  const playRule = $('#playRule');
-  const banner = $('#banner');
-
-  function showPlay(id){
-    currentPlay = id;
-    const x = plays[id];
-    playTitle.textContent = x.title;
-    playSub.textContent = x.sub;
-    playCall.textContent = x.call;
-    playRule.textContent = x.rule;
-    banner.textContent = x.section;
-    banner.style.background = x.section === 'OFFENSE' ? 'var(--off)' : 'var(--def)';
-    diagram.innerHTML = x.svg();
-    $$('.play-btn').forEach(b => b.classList.toggle('active', b.dataset.play === id));
-    requestAnimationFrame(sizeCanvas);
-  }
-
-  $$('.play-btn').forEach(b => b.addEventListener('click', () => showPlay(b.dataset.play)));
-  $$('.quickPlay').forEach(b => b.addEventListener('click', () => {
-    openTab('plays');
-    showPlay(b.dataset.playjump);
-  }));
-
-  // FINGER DRAWING
-  const stage = $('#stage');
-  const canvas = $('#drawCanvas');
-  const ctx = canvas.getContext('2d');
-
-  let drawMode = false;
-  let drawing = false;
-  let stroke = null;
-
-  const marks = {
-    spots:[],
-    motion:[],
-    inbound:[],
-    zone:[],
-    slide:[],
-    trap:[]
-  };
-
-  function sizeCanvas(){
-    const r = stage.getBoundingClientRect();
-    if(!r.width || !r.height) return;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = Math.round(r.width * dpr);
-    canvas.height = Math.round(r.height * dpr);
-    canvas.style.width = r.width + 'px';
-    canvas.style.height = r.height + 'px';
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-    redraw();
-  }
-
-  function redraw(){
-    const r = stage.getBoundingClientRect();
-    ctx.clearRect(0,0,r.width,r.height);
-    ctx.strokeStyle = '#111827';
-    ctx.lineWidth = 5;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-
-    marks[currentPlay].forEach(s => {
-      if(s.length < 2) return;
-      ctx.beginPath();
-      s.forEach((q,i) => {
-        const x = q.x * r.width;
-        const y = q.y * r.height;
-        if(i) ctx.lineTo(x,y); else ctx.moveTo(x,y);
-      });
-      ctx.stroke();
+  p.on=!p.on;
+  saveState();renderGame();
+}
+function stopClock(){
+  state.running=false;
+  if(timer){clearInterval(timer);timer=null}
+  renderGame();saveState();
+}
+function startClock(){
+  if(state.running){stopClock();return}
+  if(state.sec<=0)return;
+  state.running=true;
+  lastTick=performance.now();
+  timer=setInterval(()=>{
+    const now=performance.now();
+    const delta=(now-lastTick)/1000;
+    lastTick=now;
+    if(!state.running)return;
+    state.sec=Math.max(0,state.sec-delta);
+    const half=currentHalf();
+    state.players.forEach(p=>{
+      if(p.on){
+        p.qSec[state.q-1]+=delta;
+        p.halfSec[half]+=delta;
+      }
     });
-  }
+    if(state.sec<=0){
+      state.sec=0;
+      stopClock();
+    }else{
+      renderGame();
+    }
+  },250);
+  renderGame();
+}
+$('#runBtn').addEventListener('click',startClock);
+$('#minus10').addEventListener('click',()=>{state.sec=Math.max(0,state.sec-10);renderGame();saveState()});
+$('#plus10').addEventListener('click',()=>{state.sec=Math.min(600,state.sec+10);renderGame();saveState()});
+$('#resetClock').addEventListener('click',()=>{stopClock();state.sec=600;renderGame();saveState()});
+$('#usPlus').addEventListener('click',()=>{state.us++;renderGame();saveState()});
+$('#usMinus').addEventListener('click',()=>{state.us=Math.max(0,state.us-1);renderGame();saveState()});
+$('#themPlus').addEventListener('click',()=>{state.them++;renderGame();saveState()});
+$('#themMinus').addEventListener('click',()=>{state.them=Math.max(0,state.them-1);renderGame();saveState()});
+$$('.qbtn').forEach(b=>b.addEventListener('click',()=>{
+  stopClock();
+  state.q=Number(b.dataset.q);
+  state.sec=600;
+  renderGame();saveState();
+}));
+$('#saveGame').addEventListener('click',saveState);
+$('#resetGame').addEventListener('click',()=>{
+  if(!confirm('Reset score, clock and all player minutes?'))return;
+  stopClock();
+  state={q:1,sec:600,us:0,them:0,running:false,players:rosterSeed.map(p=>({...p,qSec:[0,0,0,0],halfSec:[0,0]}))};
+  saveState();renderGame();
+});
 
-  $('#drawToggle').addEventListener('click', e => {
-    drawMode = !drawMode;
-    canvas.classList.toggle('on', drawMode);
-    e.currentTarget.classList.toggle('active', drawMode);
-    e.currentTarget.textContent = drawMode ? '✏️ Drawing On' : '✏️ Draw';
-  });
+/* TABS */
+$$('.tab').forEach(b=>b.addEventListener('click',()=>{
+  $$('.tab').forEach(x=>x.classList.toggle('active',x===b));
+  $('#gameView').classList.toggle('active',b.dataset.tab==='game');
+  $('#clipboardView').classList.toggle('active',b.dataset.tab==='clipboard');
+  if(b.dataset.tab==='clipboard')requestAnimationFrame(sizeCanvas);
+}));
 
-  $('#drawUndo').addEventListener('click', () => {
-    marks[currentPlay].pop();
-    redraw();
-  });
+/* CLIPBOARD */
+const defs=`<defs><marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#16a34a"/></marker></defs>`;
+function P(x,y,n,c='off'){return `<circle cx="${x}" cy="${y}" r="26" class="${c}"/><text x="${x}" y="${y+1}" class="pt">${n}</text>`}
+function B(x,y){return `<circle cx="${x}" cy="${y}" r="10" class="ball"/>`}
+function A(x1,y1,x2,y2){return `<path d="M${x1} ${y1} L${x2} ${y2}" class="move" marker-end="url(#arr)"/>`}
+function half(extra=''){return `<svg viewBox="0 0 500 470" role="img" aria-label="Half court diagram">${defs}
+<rect x="8" y="8" width="484" height="454" class="court"/>
+<rect x="190" y="282" width="120" height="180" class="court"/>
+<circle cx="250" cy="282" r="60" class="court"/>
+<path d="M38 462 L38 365 M462 462 L462 365 M38 365 A212 212 0 0 1 462 365" class="court"/>
+<line x1="220" y1="420" x2="280" y2="420" class="court"/>
+<circle cx="250" cy="408" r="9" class="court"/>${extra}</svg>`}
+function full(extra=''){return `<svg viewBox="0 0 500 760" role="img" aria-label="Full court diagram">${defs}
+<rect x="8" y="8" width="484" height="744" class="court"/>
+<line x1="8" y1="380" x2="492" y2="380" class="court"/>
+<circle cx="250" cy="380" r="58" class="court"/>
+<rect x="190" y="572" width="120" height="180" class="court"/>
+<rect x="190" y="8" width="120" height="180" class="court"/>${extra}</svg>`}
 
-  $('#drawClear').addEventListener('click', () => {
-    marks[currentPlay] = [];
-    redraw();
-  });
+const plays={
+spots:{t:'STARTING SPOTS',s:'Get to your spot. Then move.',c:'“SPOTS!”',r:'1 TOP • 2 & 3 WINGS • 4 & 5 BIGS',v:()=>half(`<text x="250" y="48" class="big">OFFENSE</text>${P(250,120,'1')}${P(100,220,'2')}${P(400,220,'3')}${P(165,380,'4')}${P(335,380,'5')}${B(278,120)}`)},
+motion:{t:'PASS + CUT',s:'Pass, cut, then fill the empty spot.',c:'“PASS & CUT!”',r:'PASS → CUT → FILL',v:()=>half(`<text x="250" y="48" class="big">PASS + CUT</text>${P(250,120,'1')}${P(100,220,'2')}${P(400,220,'3')}${P(165,380,'4')}${P(335,380,'5')}${B(130,220)}${A(250,150,205,325)}${A(400,245,285,145)}<text x="250" y="445" class="lbl">4 & 5 STAY LOW + REBOUND</text>`)},
+inbound:{t:'INBOUND — GO!',s:'One inbounder. Everybody else sprints and spreads.',c:'“GO!”',r:'ONE STAYS • FOUR GO',v:()=>full(`${P(250,705,'1')}${B(282,705)}${P(200,640,'2')}${P(300,640,'3')}${P(160,600,'4')}${P(340,600,'5')}${A(200,610,95,290)}${A(300,610,405,290)}${A(160,570,165,180)}${A(340,570,335,180)}<text x="250" y="545" class="big">DON'T HUDDLE</text><text x="250" y="250" class="big">SPRINT + SPREAD</text>`)},
+zone:{t:'2-1-2 ZONE',s:'Set after the ball crosses half court.',c:'“ZONE!”',r:'2 UP • 1 MIDDLE • 2 LOW',v:()=>half(`<text x="250" y="48" class="big">2-1-2 ZONE</text>${P(160,165,'1','def')}${P(340,165,'2','def')}${P(250,275,'3','def')}${P(155,390,'4','def')}${P(345,390,'5','def')}<text x="250" y="90" class="lbl">WAIT UNTIL BALL CROSSES HALF COURT</text><text x="250" y="445" class="lbl">4 & 5 BOX OUT + REBOUND</text>`)},
+slide:{t:'ZONE SLIDE',s:'Ball moves, everybody moves.',c:'“SLIDE!”',r:'BALL MOVES → WE MOVE',v:()=>half(`<text x="250" y="48" class="big">BALL LEFT</text>${B(85,210)}${P(160,165,'1','def')}${P(340,165,'2','def')}${P(250,275,'3','def')}${P(155,390,'4','def')}${P(345,390,'5','def')}${A(160,165,120,205)}${A(340,165,285,190)}${A(250,275,205,290)}${A(155,390,125,375)}${A(345,390,300,390)}`)},
+trap:{t:'DOUBLE-TEAM',s:'After half court: closest two go to the ball.',c:'“TRAP!”',r:'2 TO BALL • 3 PROTECT',v:()=>half(`<text x="250" y="48" class="big">DOUBLE-TEAM</text>${B(105,215)}${P(145,210,'1','def')}${P(195,255,'3','def')}${P(345,170,'2','def')}${P(160,390,'4','def')}${P(340,390,'5','def')}${A(345,195,285,230)}<text x="250" y="335" class="lbl">OTHERS PROTECT BASKET</text><text x="250" y="445" class="lbl">HANDS UP • NO REACHING</text>`)}
+};
+let currentPlay='spots';
+function showPlay(id){
+  currentPlay=id;const p=plays[id];
+  $('#playTitle').textContent=p.t;$('#playSub').textContent=p.s;$('#playCall').textContent=p.c;$('#playRule').textContent=p.r;$('#diagram').innerHTML=p.v();
+  $$('.play-btn').forEach(b=>b.classList.toggle('active',b.dataset.play===id));
+  requestAnimationFrame(sizeCanvas);
+}
+$$('.play-btn').forEach(b=>b.addEventListener('click',()=>showPlay(b.dataset.play)));
 
-  function point(e){
-    const r = canvas.getBoundingClientRect();
-    return {
-      x:(e.clientX-r.left)/r.width,
-      y:(e.clientY-r.top)/r.height
-    };
-  }
+const stage=$('#stage'),canvas=$('#drawCanvas'),ctx=canvas.getContext('2d');
+let drawMode=false,drawing=false,stroke=null;
+const marks={spots:[],motion:[],inbound:[],zone:[],slide:[],trap:[]};
+function sizeCanvas(){
+  const r=stage.getBoundingClientRect();if(!r.width||!r.height)return;
+  const dpr=Math.min(devicePixelRatio||1,2);
+  canvas.width=Math.round(r.width*dpr);canvas.height=Math.round(r.height*dpr);
+  canvas.style.width=r.width+'px';canvas.style.height=r.height+'px';
+  ctx.setTransform(dpr,0,0,dpr,0,0);redraw();
+}
+function redraw(){
+  const r=stage.getBoundingClientRect();ctx.clearRect(0,0,r.width,r.height);
+  ctx.strokeStyle='#111827';ctx.lineWidth=5;ctx.lineCap='round';ctx.lineJoin='round';
+  marks[currentPlay].forEach(s=>{if(s.length<2)return;ctx.beginPath();s.forEach((q,i)=>{const x=q.x*r.width,y=q.y*r.height;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke()});
+}
+$('#drawToggle').addEventListener('click',e=>{drawMode=!drawMode;canvas.classList.toggle('on',drawMode);e.currentTarget.classList.toggle('active',drawMode);e.currentTarget.textContent=drawMode?'✏️ DRAWING':'✏️ DRAW'});
+$('#drawUndo').addEventListener('click',()=>{marks[currentPlay].pop();redraw()});
+$('#drawClear').addEventListener('click',()=>{marks[currentPlay]=[];redraw()});
+function point(e){const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height}}
+canvas.addEventListener('pointerdown',e=>{if(!drawMode)return;canvas.setPointerCapture?.(e.pointerId);drawing=true;stroke=[point(e)];marks[currentPlay].push(stroke)});
+canvas.addEventListener('pointermove',e=>{if(!drawing||!drawMode)return;stroke.push(point(e));redraw()});
+function end(){drawing=false;stroke=null}
+canvas.addEventListener('pointerup',end);canvas.addEventListener('pointercancel',end);
+if('ResizeObserver' in window)new ResizeObserver(sizeCanvas).observe(stage);
 
-  canvas.addEventListener('pointerdown', e => {
-    if(!drawMode) return;
-    canvas.setPointerCapture?.(e.pointerId);
-    drawing = true;
-    stroke = [point(e)];
-    marks[currentPlay].push(stroke);
-  });
-
-  canvas.addEventListener('pointermove', e => {
-    if(!drawing || !drawMode) return;
-    stroke.push(point(e));
-    redraw();
-  });
-
-  function endDraw(){
-    drawing = false;
-    stroke = null;
-  }
-
-  canvas.addEventListener('pointerup', endDraw);
-  canvas.addEventListener('pointercancel', endDraw);
-
-  if('ResizeObserver' in window){
-    new ResizeObserver(sizeCanvas).observe(stage);
-  } else {
-    window.addEventListener('resize', sizeCanvas);
-  }
-
-  sync();
-  showPlay('spots');
+renderGame();
+showPlay('spots');
 })();
 </script>
 </body>
