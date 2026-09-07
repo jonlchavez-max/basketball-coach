@@ -147,11 +147,26 @@ button{cursor:pointer}
   .practiceGrid{grid-template-columns:1fr}
 }
 @media(max-width:620px){.points{font-size:28px}.pointsBox{min-width:70px}}
+
+.leadersCard{border:1px solid #2c2c2c;border-radius:10px;background:#111;padding:9px;margin-bottom:10px}
+.leadersTitle{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:6px}
+.leadersTitle b{font-size:15px;font-weight:1000;color:#fff}
+.leadersTitle span{font-size:9px;color:#888;font-weight:900}
+.leadersList{display:grid;gap:5px}
+.leaderRow{display:grid;grid-template-columns:30px 1fr auto;align-items:center;gap:7px;border:1px solid #292929;border-radius:8px;background:#0a0a0a;padding:7px 9px}
+.leaderRank{font-size:16px;font-weight:1000;color:#F58426;text-align:center}
+.leaderName{font-size:14px;font-weight:950;color:#fff}
+.leaderPts{display:flex;align-items:baseline;gap:4px}
+.leaderPts b{font-size:24px;font-weight:1000;color:#fff;line-height:1}
+.leaderPts span{font-size:8px;font-weight:950;color:#aaa}
+.leaderRow:first-child{border-color:#F58426;background:#251306}
+.leaderRow:first-child .leaderRank,.leaderRow:first-child .leaderPts b{color:#F58426}
+
 </style>
 </head>
 <body>
 <div class="app">
-  <div id="buildTag" style="text-align:right;font-size:8px;color:#666;font-weight:800;margin:0 2px 2px">KNICKS COACH • 9/6 FIX</div>
+  <div id="buildTag" style="text-align:right;font-size:8px;color:#666;font-weight:800;margin:0 2px 2px">KNICKS COACH • LEADERS</div>
 <div class="modeTabs">
     <button class="modeTab on" id="gameTab">🏀 GAME</button>
     <button class="modeTab" id="clipboardTab">📋 CLIPBOARD</button>
@@ -282,6 +297,12 @@ button{cursor:pointer}
 <div class="historyModal" id="historyModal"><div class="historyBox">
 <div class="historyHead"><div class="historyTitle">Season History</div><button class="historyClose" id="historyClose">CLOSE</button></div>
 <div class="seasonSummary"><div class="recordCard"><div class="lab">Season Record</div><div class="recordBig" id="historyRecord">0–0</div></div><div class="seasonPtsCard"><div class="lab">Season Points</div><div class="seasonPtsGrid" id="seasonPtsGrid"></div></div></div>
+
+<div class="leadersCard">
+  <div class="leadersTitle"><b>POINTS LEADERS</b><span>SEASON</span></div>
+  <div class="leadersList" id="leadersList"></div>
+</div>
+
 <div class="gameHistoryList" id="gameHistoryList"></div>
 <div class="editPanel" id="editPanel"><div class="editTitle" id="editTitle">Edit Game</div><div class="editScores">KNICKS <input id="editKs" type="number" min="0"> THEM <input id="editOs" type="number" min="0"></div>
 <button class="copyLive" id="copyLivePts">USE POINTS CURRENTLY ON GAME SCREEN</button><div class="editPtsGrid" id="editPtsGrid"></div>
@@ -472,7 +493,9 @@ $("endGame").onclick=()=>{
 };
 
 let editIndex=null;
-function renderHistory(){const h=hist().map(normalizeGame),sp=seasonPoints();$("historyRecord").textContent=recordText();$("seasonPtsGrid").innerHTML=P.map(n=>`<div class="seasonPlayer"><b>${sp[n]}</b><span>${n}</span></div>`).join("");$("gameHistoryList").innerHTML=h.length?h.map((g,i)=>`<div class="histGame"><div><div class="histGameTitle">${g.date||S[g.g]?.[0]||"Game"} vs ${g.opp||S[g.g]?.[2]||"Opponent"}</div><div class="histGameSub">${g.ks>g.os?"WIN":g.ks<g.os?"LOSS":"TIE"} • Knicks ${g.ks}-${g.os} • ${P.reduce((a,n)=>a+Number(g.pts[n]||0),0)} player pts entered</div></div><button class="histEdit" data-edit="${i}">EDIT GAME</button></div>`).join(""):`<div class="histGame"><div class="histGameTitle">No completed games saved yet.</div></div>`;document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>openEdit(Number(b.dataset.edit)))}
+function renderHistory(){const h=hist().map(normalizeGame),sp=seasonPoints();$("historyRecord").textContent=recordText();$("seasonPtsGrid").innerHTML=P.map(n=>`<div class="seasonPlayer"><b>${sp[n]}</b><span>${n}</span></div>`).join("");
+ const leaders=P.map(n=>({name:n,pts:Number(sp[n]||0)})).sort((a,b)=>b.pts-a.pts||a.name.localeCompare(b.name));
+ $("leadersList").innerHTML=leaders.map((x,i)=>`<div class="leaderRow"><div class="leaderRank">${i+1}</div><div class="leaderName">${x.name}</div><div class="leaderPts"><b>${x.pts}</b><span>PTS</span></div></div>`).join("");$("gameHistoryList").innerHTML=h.length?h.map((g,i)=>`<div class="histGame"><div><div class="histGameTitle">${g.date||S[g.g]?.[0]||"Game"} vs ${g.opp||S[g.g]?.[2]||"Opponent"}</div><div class="histGameSub">${g.ks>g.os?"WIN":g.ks<g.os?"LOSS":"TIE"} • Knicks ${g.ks}-${g.os} • ${P.reduce((a,n)=>a+Number(g.pts[n]||0),0)} player pts entered</div></div><button class="histEdit" data-edit="${i}">EDIT GAME</button></div>`).join(""):`<div class="histGame"><div class="histGameTitle">No completed games saved yet.</div></div>`;document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>openEdit(Number(b.dataset.edit)))}
 function openEdit(i){const h=hist().map(normalizeGame),g=h[i];if(!g)return;editIndex=i;$("editPanel").classList.add("on");$("editTitle").textContent=`Edit ${g.date||S[g.g]?.[0]||"Game"} vs ${g.opp||S[g.g]?.[2]||"Opponent"}`;$("editKs").value=g.ks;$("editOs").value=g.os;$("editPtsGrid").innerHTML=P.map(n=>`<label class="editPlayer"><b>${n}</b><input type="number" min="0" data-editpt="${n}" value="${g.pts[n]||0}"></label>`).join("");$("editPanel").scrollIntoView({behavior:"smooth",block:"start"})}
 $("history").onclick=()=>{$("historyModal").classList.add("on");$("editPanel").classList.remove("on");renderHistory()};
 $("historyClose").onclick=()=>{$("historyModal").classList.remove("on");$("editPanel").classList.remove("on")};
