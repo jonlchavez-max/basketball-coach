@@ -43,18 +43,21 @@ button{cursor:pointer}
 .scoreRow input{width:40px;background:#050505;color:#fff;border:1px solid #444;border-radius:6px;padding:3px;text-align:center;font-weight:950}
 
 .players{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:6px}
-.card{border-radius:11px;padding:7px 8px;border:2px solid rgba(255,255,255,.11);display:grid;grid-template-columns:1fr auto;grid-template-areas:
+.card{border-radius:12px;padding:9px 10px;border:2px solid rgba(255,255,255,.11);display:grid;grid-template-columns:1fr auto;grid-template-areas:
 "name status"
 "time status"
-"score score";column-gap:8px;min-height:92px;transition:background .12s,border-color .12s,opacity .12s}
+"alert status"
+"score score";column-gap:10px;min-height:118px;transition:background .12s,border-color .12s,opacity .12s}
 .card.on{background:linear-gradient(135deg,var(--on1),var(--on2));border-color:#20c45a}
 .card.off{background:linear-gradient(135deg,var(--off1),var(--off2));border-color:#d19b00}
 .card.absent{background:linear-gradient(135deg,var(--abs1),var(--abs2));border-color:#555;opacity:.72}
 
-.name{grid-area:name;font-size:22px;font-weight:1000;line-height:1;align-self:end}
-.timeWrap{grid-area:time;display:flex;align-items:baseline;gap:7px;margin-top:4px}
-.time{font-size:25px;font-weight:1000;line-height:1;font-variant-numeric:tabular-nums}
-.timeLabel{font-size:8px;color:#d0d0d0;font-weight:900;letter-spacing:.08em}
+.name{grid-area:name;font-size:28px;font-weight:1000;line-height:1;align-self:end}
+.timeWrap{grid-area:time;display:flex;align-items:baseline;gap:8px;margin-top:7px}
+.time{font-size:30px;font-weight:1000;line-height:1;font-variant-numeric:tabular-nums}
+.timeLabel{font-size:9px;color:#d0d0d0;font-weight:900;letter-spacing:.08em}
+.halfAlert{grid-area:alert;margin-top:5px;font-size:10px;font-weight:1000;letter-spacing:.03em}
+.halfAlert.need{color:#ffd4d4}.halfAlert.met{color:#9dffb0}
 
 .statusBtn{grid-area:status;align-self:center;min-width:76px;height:35px;border:1px solid #ffffff44;border-radius:8px;background:#0005;color:#fff;font-size:11px;font-weight:1000}
 .card.on .statusBtn{background:#0aa83f}
@@ -63,7 +66,7 @@ button{cursor:pointer}
 
 .scoreTools{grid-area:score;display:grid;grid-template-columns:auto 1fr;gap:7px;align-items:center;margin-top:6px;padding-top:5px;border-top:1px solid #ffffff22}
 .pointsBox{display:flex;align-items:baseline;gap:4px;min-width:46px}
-.points{font-size:15px;font-weight:1000}
+.points{font-size:13px;font-weight:1000}
 .ptsLabel{font-size:7px;color:#ddd;font-weight:900}
 .scoreBtns{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
 .scoreBtns button{height:27px;border:1px solid #ffffff33;border-radius:6px;background:#0005;color:#fff;font-weight:950;font-size:12px}
@@ -75,18 +78,39 @@ button{cursor:pointer}
 .bottom .primary{border-color:var(--blue);color:#4cbaff}
 .bottom .danger{border-color:#6b2525;color:#ff8a8a}
 
-.clipboard{padding:3px 0 10px}
-.clipTitle{font-size:22px;font-weight:1000;margin:5px 0}
-.clipIntro{font-size:12px;color:#aaa;margin-bottom:8px}
-.practiceGrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.practice{border:1px solid #2d2d2d;border-radius:10px;background:#0c0c0c;padding:9px}
-.practice b{font-size:14px}
-.practice p{margin:4px 0 0;color:#bbb;font-size:11px;line-height:1.35}
-.cue{margin-top:6px;font-size:10px;font-weight:950;color:#ffb347}
-.reminders{margin-top:8px;border:1px solid #2d2d2d;border-radius:10px;padding:9px;background:#0b0b0b}
-.reminders b{font-size:13px}
-.reminders div{font-size:11px;color:#bbb;margin-top:5px}
 
+.clipboard{padding:3px 0 10px}
+.clipTitle{font-size:25px;font-weight:1000;margin:5px 0 2px}
+.clipIntro{font-size:11px;color:#aaa;margin-bottom:8px}
+.clipCats{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:7px}
+.clipCat{height:39px;border:1px solid #343434;border-radius:9px;background:#0d0d0d;color:#aaa;font-size:9px;font-weight:1000}
+.clipCat.on{color:#fff;border-color:#0b84d8;background:#071a2a}
+.clipGroup{display:none}.clipGroup.on{display:block}
+.clipPlayGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:7px}
+.clipPlay{min-height:48px;background:#0d0d0d;color:#fff;border:1px solid #343434;border-radius:9px;font-weight:950;text-align:left;padding:7px 8px;font-size:10px}
+.clipPlay small{display:block;color:#999;font-weight:700;margin-top:2px}
+.clipPlay.on{border-color:#0b84d8;background:#071a2a}
+.clipPlay.blankPlay{border-style:dashed}
+.clipTools{display:grid;grid-template-columns:1.4fr auto auto;gap:5px;margin:5px 0}
+.clipTool{height:38px;background:#0d0d0d;color:#fff;border:1px solid #343434;border-radius:8px;font-weight:950;font-size:10px;padding:0 10px}
+.clipTool.on{border-color:#50e877;color:#50e877;background:#082014}
+.drawWarning{display:none;font-size:9px;color:#ffb74d;text-align:center;font-weight:900;margin:4px 0}.drawWarning.on{display:block}
+.clipCard{border:1px solid #292929;border-radius:10px;background:#0c0c0c;padding:8px}
+.clipHead{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;margin-bottom:6px}
+.clipHeadTitle{font-size:18px;font-weight:1000}.clipSub{font-size:10px;color:#aaa;margin-top:2px}
+.clipCall{border:1px solid #343434;border-radius:8px;background:#050505;padding:6px 8px;font-size:10px;font-weight:950;white-space:nowrap}
+.clipStage{position:relative;overflow:hidden;background:#eef4f8;border-radius:9px}
+.clipStage svg{display:block;width:100%;height:auto;max-height:520px}
+.clipCanvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;pointer-events:none}.clipCanvas.on{pointer-events:auto}
+.clipRule{margin-top:6px;text-align:center;background:#080808;border:1px solid #292929;border-radius:8px;padding:7px;font-size:10px;font-weight:950}
+.courtLine{fill:none;stroke:#23313d;stroke-width:2}
+.offPlayer{fill:#ffb347;stroke:#111827;stroke-width:2.5}
+.defPlayer{fill:#69b6ff;stroke:#111827;stroke-width:2.5}
+.clipBall{fill:#f97316;stroke:#111827;stroke-width:2}
+.clipMove{fill:none;stroke:#16a34a;stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
+.clipPass{fill:none;stroke:#2563eb;stroke-width:5;stroke-linecap:round;stroke-dasharray:10 8}
+.clipPT{fill:#111827;font:900 18px system-ui;text-anchor:middle;dominant-baseline:middle}
+.clipLbl{fill:#111827;font:800 13px system-ui;text-anchor:middle}
 @media(max-width:620px){
   .app{padding:5px}
   .controls{grid-template-columns:1fr}
@@ -95,9 +119,9 @@ button{cursor:pointer}
   .gameBar{grid-template-columns:1fr 1fr}
   .gameBar .gameCell:first-child{grid-column:1/-1}
   .players{gap:4px}
-  .card{padding:6px;min-height:88px}
-  .name{font-size:17px}
-  .time{font-size:21px}
+  .card{padding:8px;min-height:112px}
+  .name{font-size:21px}
+  .time{font-size:25px}
   .statusBtn{min-width:61px;height:31px;font-size:9px}
   .scoreBtns button{height:25px;font-size:11px}
   .bottom{grid-template-columns:1fr}
@@ -159,19 +183,77 @@ button{cursor:pointer}
 
   <div class="modeView" id="clipboardView">
     <div class="clipboard">
-      <div class="clipTitle">Knicks Playbook</div>
-      <div class="clipIntro">Simple cues for 3rd grade. Short passes, help the ball, move, rebound, get back.</div>
-      <div class="practiceGrid">
-        <div class="practice"><b>HELP THE BALL</b><p>When a teammate picks up the dribble, the nearest teammate comes toward the ball. Everyone else stays useful.</p><div class="cue">CALL: “HELP — DON’T CROWD!”</div></div>
-        <div class="practice"><b>PASS → MOVE</b><p>After passing, move immediately. Cut toward the basket or into a useful short passing lane.</p><div class="cue">CALL: “PASS AND MOVE!”</div></div>
-        <div class="practice"><b>SHOT → REBOUND</b><p>No watching. The ball goes up and we attack the boards.</p><div class="cue">CALL: “SHOT — GO!”</div></div>
-        <div class="practice"><b>TURNOVER → BACK</b><p>First job is to get between the ball and our basket. Then find a player.</p><div class="cue">CALL: “BACK!”</div></div>
-        <div class="practice"><b>MEET THE PASS</b><p>Receivers come toward the ball. Prefer chest and bounce passes over lobs.</p><div class="cue">CALL: “GO GET IT!”</div></div>
-        <div class="practice"><b>SEE TWO</b><p>On defense, see your player and the ball. Keep hands up and stay active.</p><div class="cue">CALL: “SEE TWO — HANDS UP!”</div></div>
+      <div class="clipTitle">PRACTICE 2</div>
+      <div class="clipIntro">Game-film priorities + our original play diagrams. Tap a play, then draw on top of it if you want.</div>
+
+      <div class="clipCats">
+        <button class="clipCat on" data-cat="practice2">PRACTICE 2</button>
+        <button class="clipCat" data-cat="offense">OFFENSE</button>
+        <button class="clipCat" data-cat="transition">TRANSITION</button>
+        <button class="clipCat" data-cat="defense">DEFENSE</button>
+        <button class="clipCat" data-cat="blank">✏️ BLANK</button>
       </div>
-      <div class="reminders"><b>TEAM REMINDERS</b><div>Dribble → pick up → pass or shoot • No lobs • Keep moving • Bigs crash the boards • Come toward the pass</div></div>
+
+      <div class="clipGroup on" data-group="practice2">
+        <div class="clipPlayGrid">
+          <button class="clipPlay on" data-play="helpball">HELP THE BALL<small>Nearest teammate rescues</small></button>
+          <button class="clipPlay" data-play="passmove">PASS → MOVE<small>Pass, then cut</small></button>
+          <button class="clipPlay" data-play="rebound">SHOT → REBOUND<small>No watching</small></button>
+          <button class="clipPlay" data-play="getback">TURNOVER → BACK<small>Protect our basket</small></button>
+          <button class="clipPlay" data-play="meetpass">MEET THE PASS<small>Come toward the ball</small></button>
+          <button class="clipPlay" data-play="seetwo">SEE TWO<small>Player + ball</small></button>
+        </div>
+      </div>
+
+      <div class="clipGroup" data-group="offense">
+        <div class="clipPlayGrid">
+          <button class="clipPlay" data-play="spots">5-SPOT SPACING<small>Starting spots</small></button>
+          <button class="clipPlay" data-play="motion">PASS → CUT → FILL<small>Base movement</small></button>
+          <button class="clipPlay" data-play="givego">GIVE & GO<small>Pass, cut, get it back</small></button>
+          <button class="clipPlay" data-play="screen">SCREEN & ROLL<small>Simple 1 + 4 action</small></button>
+        </div>
+      </div>
+
+      <div class="clipGroup" data-group="transition">
+        <div class="clipPlayGrid">
+          <button class="clipPlay" data-play="outlet">REBOUND → OUTLET<small>Big rebounds, guard gets wide</small></button>
+          <button class="clipPlay" data-play="fastbreak">3-LANE BREAK<small>Left • Middle • Right</small></button>
+          <button class="clipPlay" data-play="pressbreak">PRESS BREAK<small>Meet the pass</small></button>
+          <button class="clipPlay" data-play="inbound">BASELINE INBOUND<small>Short safe options</small></button>
+        </div>
+      </div>
+
+      <div class="clipGroup" data-group="defense">
+        <div class="clipPlayGrid">
+          <button class="clipPlay" data-play="zone">2-1-2 ZONE<small>Starting positions</small></button>
+          <button class="clipPlay" data-play="slide">ZONE SLIDE<small>Move with the ball</small></button>
+          <button class="clipPlay" data-play="trap">DOUBLE-TEAM<small>After half court</small></button>
+          <button class="clipPlay" data-play="stoprebound">STOP + REBOUND<small>Finish the possession</small></button>
+        </div>
+      </div>
+
+      <div class="clipGroup" data-group="blank">
+        <div class="clipPlayGrid"><button class="clipPlay blankPlay" data-play="blank">BLANK COURT<small>Finger-draw anything</small></button></div>
+      </div>
+
+      <div class="clipTools">
+        <button class="clipTool" id="clipDraw">✏️ DRAW ON BOARD</button>
+        <button class="clipTool" id="clipUndo">↶ UNDO</button>
+        <button class="clipTool" id="clipClear">CLEAR</button>
+      </div>
+      <div class="drawWarning" id="drawWarning">DRAW MODE IS ON — swipe inside the court to draw.</div>
+
+      <div class="clipCard">
+        <div class="clipHead">
+          <div><div class="clipHeadTitle" id="clipHeadTitle">HELP THE BALL</div><div class="clipSub" id="clipSub">One helper comes to the ball. Everyone else stays useful.</div></div>
+          <div class="clipCall" id="clipCall">“HELP — DON’T CROWD!”</div>
+        </div>
+        <div class="clipStage" id="clipStage"><div id="clipDiagram"></div><canvas class="clipCanvas" id="clipCanvas"></canvas></div>
+        <div class="clipRule" id="clipRule">NEAREST TEAMMATE HELPS • EVERYONE ELSE STAYS OUT</div>
+      </div>
     </div>
   </div>
+</div>
 </div>
 
 <script>
@@ -207,7 +289,8 @@ P.forEach(n=>{
 });
 st.r=false;st.last=null;
 const fmt=s=>Math.floor(Math.max(0,s)/60)+":"+String(Math.round(Math.max(0,s))%60).padStart(2,"0");
-const total=n=>st.played[n].reduce((a,b)=>a+b,0);
+const halfPlayed=n=>st.q<2?(st.played[n][0]+st.played[n][1]):(st.played[n][2]+st.played[n][3]);
+const halfNeed=n=>Math.max(0,300-halfPlayed(n));
 
 function save(){localStorage.setItem(K,JSON.stringify(st))}
 function nextStatus(s){return s==="on"?"off":s==="off"?"absent":"on"}
@@ -218,7 +301,8 @@ function card(n){
  c.className="card "+s;
  c.innerHTML=`
    <div class="name">${n}</div>
-   <div class="timeWrap"><span class="time">${fmt(total(n))}</span><span class="timeLabel">PLAYED</span></div>
+   <div class="timeWrap"><span class="time">${fmt(halfPlayed(n))}</span><span class="timeLabel">${st.q<2?"1ST HALF":"2ND HALF"}</span></div>
+   <div class="halfAlert ${halfNeed(n)>0?"need":"met"}">${halfNeed(n)>0?"⚠ NEEDS "+fmt(halfNeed(n)):"✓ 5 MIN MET"}</div>
    <button class="statusBtn" data-status="${n}">${s==="on"?"ON":s==="off"?"OFF":"ABSENT"}</button>
    <div class="scoreTools">
      <div class="pointsBox"><span class="points">${st.pts[n]}</span><span class="ptsLabel">PTS</span></div>
@@ -362,8 +446,67 @@ $("resetGame").onclick=()=>{
 
 const gameTab=$("gameTab"),clipboardTab=$("clipboardTab"),gameView=$("gameView"),clipboardView=$("clipboardView");
 gameTab.onclick=()=>{gameTab.classList.add("on");clipboardTab.classList.remove("on");gameView.classList.add("on");clipboardView.classList.remove("on")};
-clipboardTab.onclick=()=>{clipboardTab.classList.add("on");gameTab.classList.remove("on");clipboardView.classList.add("on");gameView.classList.remove("on")};
+clipboardTab.onclick=()=>{clipboardTab.classList.add("on");gameTab.classList.remove("on");clipboardView.classList.add("on");gameView.classList.remove("on");requestAnimationFrame(sizeCanvas)};
 
+/* CLIPBOARD: restored illustrated plays + free draw */
+const defs=`<defs><marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#16a34a"/></marker><marker id="passArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#2563eb"/></marker></defs>`;
+const CP=(x,y,n,c="offPlayer")=>`<circle cx="${x}" cy="${y}" r="25" class="${c}"/><text x="${x}" y="${y+1}" class="clipPT">${n}</text>`;
+const BALL=(x,y)=>`<circle cx="${x}" cy="${y}" r="10" class="clipBall"/>`;
+const MOVE=(x1,y1,x2,y2)=>`<path d="M${x1} ${y1} L${x2} ${y2}" class="clipMove" marker-end="url(#arr)"/>`;
+const PASS=(x1,y1,x2,y2)=>`<path d="M${x1} ${y1} L${x2} ${y2}" class="clipPass" marker-end="url(#passArr)"/>`;
+const TXT=(x,y,t)=>`<text x="${x}" y="${y}" class="clipLbl">${t}</text>`;
+function halfCourt(extra=""){return `<svg viewBox="0 0 500 470">${defs}<rect x="8" y="8" width="484" height="454" class="courtLine"/><rect x="190" y="282" width="120" height="180" class="courtLine"/><circle cx="250" cy="282" r="60" class="courtLine"/><path d="M38 462 L38 365 M462 462 L462 365 M38 365 A212 212 0 0 1 462 365" class="courtLine"/><line x1="220" y1="420" x2="280" y2="420" class="courtLine"/><circle cx="250" cy="408" r="9" class="courtLine"/>${extra}</svg>`}
+function fullCourt(extra=""){return `<svg viewBox="0 0 500 760">${defs}<rect x="8" y="8" width="484" height="744" class="courtLine"/><line x1="8" y1="380" x2="492" y2="380" class="courtLine"/><circle cx="250" cy="380" r="58" class="courtLine"/><rect x="190" y="572" width="120" height="180" class="courtLine"/><rect x="190" y="8" width="120" height="180" class="courtLine"/>${extra}</svg>`}
+
+const plays={
+helpball:{t:"HELP THE BALL",s:"One helper comes to the ball. Everyone else stays useful.",c:"“HELP — DON’T CROWD!”",r:"NEAREST TEAMMATE HELPS • EVERYONE ELSE STAYS OUT",svg:halfCourt(CP(250,130,"1")+BALL(270,130)+CP(120,245,"2")+CP(380,245,"3")+CP(165,355,"4")+CP(335,355,"5")+MOVE(120,245,205,165)+TXT(120,205,"HELP"))},
+passmove:{t:"PASS → MOVE",s:"After the pass, move immediately toward the basket or useful space.",c:"“PASS AND MOVE!”",r:"PASS • CUT • FILL",svg:halfCourt(CP(250,130,"1")+BALL(270,130)+CP(120,245,"2")+CP(380,245,"3")+CP(165,355,"4")+CP(335,355,"5")+PASS(250,130,120,245)+MOVE(250,160,235,320)+TXT(245,220,"CUT"))},
+rebound:{t:"SHOT → REBOUND",s:"No watching the shot. Attack the boards.",c:"“SHOT — GO!”",r:"BALL GOES UP → WE GO IN",svg:halfCourt(CP(105,170,"1")+BALL(125,170)+CP(395,170,"2")+CP(120,300,"3")+CP(180,350,"4")+CP(320,350,"5")+PASS(105,170,250,408)+MOVE(180,350,225,405)+MOVE(320,350,275,405)+TXT(250,260,"CRASH"))},
+getback:{t:"TURNOVER → BACK",s:"First protect our basket, then find a player.",c:"“BACK!”",r:"GET BETWEEN BALL AND BASKET FIRST",svg:fullCourt(CP(125,180,"1")+CP(250,240,"2")+CP(380,195,"3")+CP(175,315,"4")+CP(330,320,"5")+BALL(255,365)+MOVE(125,180,140,575)+MOVE(250,240,235,600)+MOVE(380,195,350,575)+MOVE(175,315,190,620)+MOVE(330,320,310,625))},
+meetpass:{t:"MEET THE PASS",s:"Receiver steps toward the ball so the pass is short and safe.",c:"“GO GET IT!”",r:"SHORT PASS • RECEIVER COMES TO BALL • NO LOBS",svg:halfCourt(CP(250,145,"1")+BALL(270,145)+CP(105,245,"2")+CP(395,245,"3")+PASS(250,145,140,225)+MOVE(105,245,145,225)+TXT(120,190,"MEET"))},
+seetwo:{t:"SEE TWO",s:"See your player and the ball. Hands up.",c:"“SEE TWO — HANDS UP!”",r:"PLAYER + BALL IN YOUR VISION",svg:halfCourt(CP(135,210,"1","defPlayer")+CP(365,210,"2","defPlayer")+CP(250,315,"3","defPlayer")+CP(155,375,"4","defPlayer")+CP(345,375,"5","defPlayer")+BALL(250,120)+PASS(135,210,250,120)+PASS(135,210,105,270)+TXT(135,175,"BALL + PLAYER"))},
+spots:{t:"5-SPOT SPACING",s:"Get to starting spots, then move.",c:"“SPOTS!”",r:"1 TOP • 2 & 3 WINGS • 4 & 5 BIGS",svg:halfCourt(CP(250,120,"1")+CP(105,230,"2")+CP(395,230,"3")+CP(165,350,"4")+CP(335,350,"5")+BALL(272,120))},
+motion:{t:"PASS → CUT → FILL",s:"Our simple base movement.",c:"“PASS — CUT — FILL!”",r:"PASSER CUTS • NEXT PLAYER FILLS",svg:halfCourt(CP(250,120,"1")+CP(105,230,"2")+CP(395,230,"3")+CP(165,350,"4")+CP(335,350,"5")+BALL(272,120)+PASS(250,120,105,230)+MOVE(250,150,245,330)+MOVE(395,230,305,145))},
+givego:{t:"GIVE & GO",s:"Pass, cut hard, get the ball back.",c:"“GIVE AND GO!”",r:"PASS • CUT TO HOOP • RETURN PASS",svg:halfCourt(CP(250,130,"1")+CP(110,245,"2")+BALL(270,130)+PASS(250,130,110,245)+MOVE(250,160,235,350)+PASS(110,245,235,350))},
+screen:{t:"SCREEN & ROLL",s:"Simple two-player action.",c:"“SCREEN!”",r:"SCREEN • BALL USES IT • ROLL TO HOOP",svg:halfCourt(CP(180,160,"1")+BALL(200,160)+CP(310,215,"4")+MOVE(180,160,300,155)+MOVE(310,215,250,365)+TXT(320,180,"SCREEN"))},
+outlet:{t:"REBOUND → OUTLET",s:"Big gets rebound. Guard gets wide and comes to ball.",c:"“OUTLET!”",r:"REBOUND • CHIN IT • SHORT OUTLET",svg:halfCourt(CP(250,375,"5")+BALL(270,375)+CP(110,250,"1")+PASS(250,375,110,250)+MOVE(110,250,85,215))},
+fastbreak:{t:"3-LANE BREAK",s:"Run left, middle and right lanes.",c:"“LANES!”",r:"LEFT • MIDDLE • RIGHT",svg:fullCourt(CP(100,625,"1")+CP(250,630,"2")+CP(400,625,"3")+MOVE(100,600,100,170)+MOVE(250,600,250,170)+MOVE(400,600,400,170))},
+pressbreak:{t:"PRESS BREAK",s:"Use short options and meet the pass.",c:"“MEET IT!”",r:"SHORT PASS • COME TO BALL • NO LOBS",svg:fullCourt(CP(250,680,"1")+BALL(270,680)+CP(120,575,"2")+CP(380,575,"3")+CP(200,465,"4")+CP(300,465,"5")+PASS(250,680,120,575)+MOVE(120,575,150,595))},
+inbound:{t:"BASELINE INBOUND",s:"Give the inbounder easy short options.",c:"“GET OPEN!”",r:"SHORT OPTION FIRST • MEET THE PASS",svg:halfCourt(CP(250,445,"1")+BALL(270,445)+CP(145,365,"2")+CP(355,365,"3")+CP(160,275,"4")+CP(340,275,"5")+MOVE(145,365,210,345)+PASS(250,445,210,345))},
+zone:{t:"2-1-2 ZONE",s:"Simple starting positions.",c:"“ZONE!”",r:"2 UP • 1 MIDDLE • 2 LOW",svg:halfCourt(CP(170,190,"1","defPlayer")+CP(330,190,"2","defPlayer")+CP(250,285,"3","defPlayer")+CP(150,365,"4","defPlayer")+CP(350,365,"5","defPlayer"))},
+slide:{t:"ZONE SLIDE",s:"Everyone moves together with the ball.",c:"“SLIDE!”",r:"BALL MOVES → FIVE MOVE",svg:halfCourt(CP(170,190,"1","defPlayer")+CP(330,190,"2","defPlayer")+CP(250,285,"3","defPlayer")+CP(150,365,"4","defPlayer")+CP(350,365,"5","defPlayer")+BALL(410,175)+MOVE(170,190,240,190)+MOVE(330,190,380,190)+MOVE(250,285,315,285)+MOVE(150,365,215,365)+MOVE(350,365,390,365))},
+trap:{t:"DOUBLE-TEAM",s:"Only after half court.",c:"“TRAP!”",r:"TWO TO BALL • OTHERS SEE TWO",svg:halfCourt(BALL(390,205)+CP(330,205,"1","defPlayer")+CP(360,270,"2","defPlayer")+CP(220,280,"3","defPlayer")+CP(150,365,"4","defPlayer")+CP(340,365,"5","defPlayer")+MOVE(330,205,375,215)+MOVE(360,270,385,230))},
+stoprebound:{t:"STOP + REBOUND",s:"A stop is not done until we get the ball.",c:"“STOP — REBOUND!”",r:"CONTEST • BOX OUT • GET BALL",svg:halfCourt(CP(170,220,"1","defPlayer")+CP(330,220,"2","defPlayer")+CP(250,300,"3","defPlayer")+CP(170,365,"4","defPlayer")+CP(330,365,"5","defPlayer")+BALL(250,150)+MOVE(170,365,220,400)+MOVE(330,365,280,400))},
+blank:{t:"BLANK COURT",s:"Free draw anything.",c:"“DRAW IT.”",r:"USE YOUR FINGER OR MOUSE",svg:halfCourt("")}
+};
+
+function setPlay(key){
+ const p=plays[key]||plays.helpball;
+ $("clipHeadTitle").textContent=p.t;$("clipSub").textContent=p.s;$("clipCall").textContent=p.c;$("clipRule").textContent=p.r;$("clipDiagram").innerHTML=p.svg;
+ document.querySelectorAll(".clipPlay").forEach(b=>b.classList.toggle("on",b.dataset.play===key));
+ requestAnimationFrame(sizeCanvas);
+}
+document.querySelectorAll(".clipCat").forEach(b=>b.onclick=()=>{
+ document.querySelectorAll(".clipCat").forEach(x=>x.classList.remove("on"));b.classList.add("on");
+ document.querySelectorAll(".clipGroup").forEach(g=>g.classList.toggle("on",g.dataset.group===b.dataset.cat));
+ const first=document.querySelector(`.clipGroup[data-group="${b.dataset.cat}"] .clipPlay`);
+ if(first)setPlay(first.dataset.play);
+});
+document.querySelectorAll(".clipPlay").forEach(b=>b.onclick=()=>setPlay(b.dataset.play));
+
+const canvas=$("clipCanvas"),ctx=canvas.getContext("2d");let drawing=false,drawOn=false,strokes=[],current=null;
+function sizeCanvas(){const r=$("clipStage").getBoundingClientRect();if(!r.width||!r.height)return;const d=devicePixelRatio||1;const old=canvas.toDataURL();canvas.width=Math.round(r.width*d);canvas.height=Math.round(r.height*d);canvas.style.width=r.width+"px";canvas.style.height=r.height+"px";ctx.setTransform(d,0,0,d,0,0);redraw()}
+function redraw(){ctx.clearRect(0,0,canvas.width,canvas.height);ctx.lineWidth=4;ctx.lineCap="round";ctx.lineJoin="round";ctx.strokeStyle="#e11d48";for(const s of strokes){if(s.length<2)continue;ctx.beginPath();ctx.moveTo(s[0].x,s[0].y);for(let i=1;i<s.length;i++)ctx.lineTo(s[i].x,s[i].y);ctx.stroke()}}
+function pos(e){const r=canvas.getBoundingClientRect(),t=e.touches?e.touches[0]:e;return{x:t.clientX-r.left,y:t.clientY-r.top}}
+function begin(e){if(!drawOn)return;e.preventDefault();drawing=true;current=[pos(e)];strokes.push(current)}
+function move(e){if(!drawing||!drawOn)return;e.preventDefault();current.push(pos(e));redraw()}
+function finish(){drawing=false;current=null}
+canvas.addEventListener("pointerdown",begin);canvas.addEventListener("pointermove",move);canvas.addEventListener("pointerup",finish);canvas.addEventListener("pointercancel",finish);
+$("clipDraw").onclick=()=>{drawOn=!drawOn;canvas.classList.toggle("on",drawOn);$("clipDraw").classList.toggle("on",drawOn);$("drawWarning").classList.toggle("on",drawOn)};
+$("clipUndo").onclick=()=>{strokes.pop();redraw()};
+$("clipClear").onclick=()=>{strokes=[];redraw()};
+window.addEventListener("resize",()=>requestAnimationFrame(sizeCanvas));
+setPlay("helpball");
 render();
 })();
 </script>
