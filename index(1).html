@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#050505">
+<title>Knicks Season Tracker</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#050505;--panel:#0d0d0d;--line:#2a2a2a;--text:#fff;--muted:#999;
+  --on1:#075f27;--on2:#0a8535;--off1:#5c4700;--off2:#806200;--abs1:#272727;--abs2:#3a3a3a;
+  --blue:#0b84d8;--orange:#ff8a00;--red:#e53935;
+}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+button,input{font:inherit}
+button{cursor:pointer}
+.app{max-width:980px;margin:auto;padding:8px}
+
+.modeTabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;position:sticky;top:0;z-index:20;background:var(--bg);padding:4px 0 5px}
+.modeTab{height:38px;border:1px solid #343434;border-radius:9px;background:#0d0d0d;color:#aaa;font-weight:950}
+.modeTab.on{color:#fff;border-color:var(--blue);background:#071a2a}
+.modeView{display:none}.modeView.on{display:block}
+
+.top{position:sticky;top:49px;z-index:10;background:var(--bg);padding-bottom:6px;border-bottom:1px solid #222}
+.controls{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center}
+.qs,.acts{display:flex;gap:4px}
+.q,.btn{height:38px;border:1px solid #3a3a3a;border-radius:9px;background:#0d0d0d;color:#fff;font-weight:900}
+.q{width:39px}.q.on{color:var(--orange);border-color:var(--orange)}
+.btn{padding:0 10px}
+.clock{text-align:center;font-size:46px;font-weight:1000;line-height:.9;font-variant-numeric:tabular-nums}
+.quarter{text-align:center;font-size:10px;color:#bbb;font-weight:900;margin-top:3px}
+.nudges{display:flex;justify-content:center;gap:5px;margin-top:4px}
+.nudges .btn{height:27px;font-size:10px}
+
+.gameBar{margin-top:6px;display:grid;grid-template-columns:1.35fr .8fr .8fr;gap:5px}
+.gameCell{border:1px solid var(--line);background:#0c0c0c;border-radius:9px;padding:6px 8px;min-height:52px}
+.lab{font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.main{font-size:13px;font-weight:950;margin-top:2px}
+.sub{font-size:9px;color:#aaa;margin-top:1px}
+.scoreRow{display:flex;align-items:center;gap:4px;margin-top:2px;font-size:12px;font-weight:950}
+.scoreRow input{width:40px;background:#050505;color:#fff;border:1px solid #444;border-radius:6px;padding:3px;text-align:center;font-weight:950}
+
+.players{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:6px}
+.card{border-radius:11px;padding:7px 8px;border:2px solid rgba(255,255,255,.11);display:grid;grid-template-columns:1fr auto;grid-template-areas:
+"name status"
+"time status"
+"score score";column-gap:8px;min-height:92px;transition:background .12s,border-color .12s,opacity .12s}
+.card.on{background:linear-gradient(135deg,var(--on1),var(--on2));border-color:#20c45a}
+.card.off{background:linear-gradient(135deg,var(--off1),var(--off2));border-color:#d19b00}
+.card.absent{background:linear-gradient(135deg,var(--abs1),var(--abs2));border-color:#555;opacity:.72}
+
+.name{grid-area:name;font-size:22px;font-weight:1000;line-height:1;align-self:end}
+.timeWrap{grid-area:time;display:flex;align-items:baseline;gap:7px;margin-top:4px}
+.time{font-size:25px;font-weight:1000;line-height:1;font-variant-numeric:tabular-nums}
+.timeLabel{font-size:8px;color:#d0d0d0;font-weight:900;letter-spacing:.08em}
+
+.statusBtn{grid-area:status;align-self:center;min-width:76px;height:35px;border:1px solid #ffffff44;border-radius:8px;background:#0005;color:#fff;font-size:11px;font-weight:1000}
+.card.on .statusBtn{background:#0aa83f}
+.card.off .statusBtn{background:#d09b00;color:#111}
+.card.absent .statusBtn{background:#666;color:#fff}
+
+.scoreTools{grid-area:score;display:grid;grid-template-columns:auto 1fr;gap:7px;align-items:center;margin-top:6px;padding-top:5px;border-top:1px solid #ffffff22}
+.pointsBox{display:flex;align-items:baseline;gap:4px;min-width:46px}
+.points{font-size:15px;font-weight:1000}
+.ptsLabel{font-size:7px;color:#ddd;font-weight:900}
+.scoreBtns{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.scoreBtns button{height:27px;border:1px solid #ffffff33;border-radius:6px;background:#0005;color:#fff;font-weight:950;font-size:12px}
+.scoreBtns button.undo{font-size:10px;color:#ddd}
+.card.absent .scoreBtns button{opacity:.35;pointer-events:none}
+
+.bottom{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-top:6px}
+.bottom button{height:34px;background:#0c0c0c;color:#fff;border:1px solid #333;border-radius:8px;font-size:10px;font-weight:900}
+.bottom .primary{border-color:var(--blue);color:#4cbaff}
+.bottom .danger{border-color:#6b2525;color:#ff8a8a}
+
+.clipboard{padding:3px 0 10px}
+.clipTitle{font-size:22px;font-weight:1000;margin:5px 0}
+.clipIntro{font-size:12px;color:#aaa;margin-bottom:8px}
+.practiceGrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.practice{border:1px solid #2d2d2d;border-radius:10px;background:#0c0c0c;padding:9px}
+.practice b{font-size:14px}
+.practice p{margin:4px 0 0;color:#bbb;font-size:11px;line-height:1.35}
+.cue{margin-top:6px;font-size:10px;font-weight:950;color:#ffb347}
+.reminders{margin-top:8px;border:1px solid #2d2d2d;border-radius:10px;padding:9px;background:#0b0b0b}
+.reminders b{font-size:13px}
+.reminders div{font-size:11px;color:#bbb;margin-top:5px}
+
+@media(max-width:620px){
+  .app{padding:5px}
+  .controls{grid-template-columns:1fr}
+  .qs,.acts{justify-content:center}
+  .clock{font-size:42px}
+  .gameBar{grid-template-columns:1fr 1fr}
+  .gameBar .gameCell:first-child{grid-column:1/-1}
+  .players{gap:4px}
+  .card{padding:6px;min-height:88px}
+  .name{font-size:17px}
+  .time{font-size:21px}
+  .statusBtn{min-width:61px;height:31px;font-size:9px}
+  .scoreBtns button{height:25px;font-size:11px}
+  .bottom{grid-template-columns:1fr}
+  .practiceGrid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="modeTabs">
+    <button class="modeTab on" id="gameTab">🏀 GAME</button>
+    <button class="modeTab" id="clipboardTab">📋 CLIPBOARD</button>
+  </div>
+
+  <div class="modeView on" id="gameView">
+    <div class="top">
+      <div class="controls">
+        <div class="qs" id="qs"></div>
+        <div>
+          <div class="clock" id="clock">10:00</div>
+          <div class="quarter" id="quarter">1ST QUARTER</div>
+          <div class="nudges">
+            <button class="btn" id="back">◀ -10</button>
+            <button class="btn" id="clockReset">RESET TIME</button>
+            <button class="btn" id="fwd">+10 ▶</button>
+          </div>
+        </div>
+        <div class="acts">
+          <button class="btn" id="start">START</button>
+          <button class="btn" id="sync">SYNC</button>
+        </div>
+      </div>
+
+      <div class="gameBar">
+        <div class="gameCell">
+          <div class="lab">Current Game</div>
+          <div class="main" id="opp"></div>
+          <div class="sub" id="meta"></div>
+        </div>
+        <div class="gameCell">
+          <div class="lab">Score</div>
+          <div class="scoreRow">KNICKS <input id="ks" type="number" min="0" value="0"></div>
+        </div>
+        <div class="gameCell">
+          <div class="lab">Opponent</div>
+          <div class="scoreRow">THEM <input id="os" type="number" min="0" value="0"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="players" id="players"></div>
+
+    <div class="bottom">
+      <button class="primary" id="endGame">END GAME</button>
+      <button id="history">GAME HISTORY</button>
+      <button class="danger" id="resetGame">RESET GAME</button>
+    </div>
+  </div>
+
+  <div class="modeView" id="clipboardView">
+    <div class="clipboard">
+      <div class="clipTitle">Knicks Playbook</div>
+      <div class="clipIntro">Simple cues for 3rd grade. Short passes, help the ball, move, rebound, get back.</div>
+      <div class="practiceGrid">
+        <div class="practice"><b>HELP THE BALL</b><p>When a teammate picks up the dribble, the nearest teammate comes toward the ball. Everyone else stays useful.</p><div class="cue">CALL: “HELP — DON’T CROWD!”</div></div>
+        <div class="practice"><b>PASS → MOVE</b><p>After passing, move immediately. Cut toward the basket or into a useful short passing lane.</p><div class="cue">CALL: “PASS AND MOVE!”</div></div>
+        <div class="practice"><b>SHOT → REBOUND</b><p>No watching. The ball goes up and we attack the boards.</p><div class="cue">CALL: “SHOT — GO!”</div></div>
+        <div class="practice"><b>TURNOVER → BACK</b><p>First job is to get between the ball and our basket. Then find a player.</p><div class="cue">CALL: “BACK!”</div></div>
+        <div class="practice"><b>MEET THE PASS</b><p>Receivers come toward the ball. Prefer chest and bounce passes over lobs.</p><div class="cue">CALL: “GO GET IT!”</div></div>
+        <div class="practice"><b>SEE TWO</b><p>On defense, see your player and the ball. Keep hands up and stay active.</p><div class="cue">CALL: “SEE TWO — HANDS UP!”</div></div>
+      </div>
+      <div class="reminders"><b>TEAM REMINDERS</b><div>Dribble → pick up → pass or shoot • No lobs • Keep moving • Bigs crash the boards • Come toward the pass</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(()=>{
+const P=["Zane","Ethan","Vivaan","Max","Niam","Jonah","Nhonebong","Justin","Sidarth","Krew"];
+const S=[
+["Sun 9/6","12 PM","D1 White","HOME","Court 03"],
+["Sun 9/20","3 PM","Collinsville Pirates","HOME","Court 01"],
+["Sun 9/27","12 PM","Collinsville Pirates","AWAY","Court 01"],
+["Sun 10/4","12 PM","Prosper Elite","AWAY","Court 03"],
+["Sat 10/17","3 PM","One J Blue","HOME","Court 03"],
+["Sat 10/24","9 AM","Wolfpack","HOME","Court 03"],
+["Sat 10/31","3 PM","D1 White","AWAY","Court 03"],
+["Sun 11/8","1 PM","Jags","AWAY","Court 04"]
+];
+const K="knicks_live_v5_simple",H="knicks_games_v5_simple",$=x=>document.getElementById(x);
+const fresh=g=>({
+ g,q:0,rem:[600,600,600,600],
+ status:Object.fromEntries(P.map(n=>[n,"off"])),
+ played:Object.fromEntries(P.map(n=>[n,[0,0,0,0]])),
+ pts:Object.fromEntries(P.map(n=>[n,0])),
+ undo:Object.fromEntries(P.map(n=>[n,[]])),
+ ks:0,os:0,r:false,last:null
+});
+const load=k=>{try{return JSON.parse(localStorage.getItem(k))}catch{return null}};
+const hist=()=>load(H)||[];
+let st=load(K)||fresh(0);
+P.forEach(n=>{
+ if(!st.status||!st.status[n]){st.status=st.status||{};st.status[n]="off"}
+ if(!st.played[n])st.played[n]=[0,0,0,0];
+ if(st.pts[n]===undefined)st.pts[n]=0;
+ if(!st.undo[n])st.undo[n]=[];
+});
+st.r=false;st.last=null;
+const fmt=s=>Math.floor(Math.max(0,s)/60)+":"+String(Math.round(Math.max(0,s))%60).padStart(2,"0");
+const total=n=>st.played[n].reduce((a,b)=>a+b,0);
+
+function save(){localStorage.setItem(K,JSON.stringify(st))}
+function nextStatus(s){return s==="on"?"off":s==="off"?"absent":"on"}
+
+function card(n){
+ const c=document.createElement("div");
+ const s=st.status[n];
+ c.className="card "+s;
+ c.innerHTML=`
+   <div class="name">${n}</div>
+   <div class="timeWrap"><span class="time">${fmt(total(n))}</span><span class="timeLabel">PLAYED</span></div>
+   <button class="statusBtn" data-status="${n}">${s==="on"?"ON":s==="off"?"OFF":"ABSENT"}</button>
+   <div class="scoreTools">
+     <div class="pointsBox"><span class="points">${st.pts[n]}</span><span class="ptsLabel">PTS</span></div>
+     <div class="scoreBtns">
+       <button data-score="${n}" data-d="1">+1</button>
+       <button data-score="${n}" data-d="2">+2</button>
+       <button data-score="${n}" data-d="3">+3</button>
+       <button class="undo" data-undo="${n}">UNDO</button>
+     </div>
+   </div>`;
+ c.addEventListener("click",e=>{
+   if(e.target.closest("button"))return;
+   if(st.status[n]==="absent")return;
+   if(st.status[n]==="off" && P.filter(x=>st.status[x]==="on").length>=5)return alert("5 players are already ON.");
+   st.status[n]=st.status[n]==="on"?"off":"on";
+   render();
+ });
+ return c;
+}
+
+function render(){
+ save();
+ $("qs").innerHTML="";
+ ["Q1","Q2","Q3","Q4"].forEach((x,i)=>{
+   const b=document.createElement("button");
+   b.className="q "+(st.q===i?"on":"");
+   b.textContent=x;
+   b.onclick=()=>{st.r=false;st.q=i;render()};
+   $("qs").appendChild(b);
+ });
+ $("clock").textContent=fmt(st.rem[st.q]);
+ $("quarter").textContent=["1ST QUARTER","2ND QUARTER","3RD QUARTER","4TH QUARTER"][st.q];
+ $("start").textContent=st.r?"PAUSE":"START";
+ const g=S[st.g]||S[0];
+ $("opp").textContent=g[2];
+ $("meta").textContent=`${g[0]} • ${g[1]} • ${g[3]} • ${g[4]}`;
+ $("ks").value=st.ks;$("os").value=st.os;
+
+ const box=$("players");box.innerHTML="";
+ P.forEach(n=>box.appendChild(card(n)));
+
+ document.querySelectorAll("[data-status]").forEach(b=>b.onclick=e=>{
+   e.stopPropagation();
+   const n=b.dataset.status,ns=nextStatus(st.status[n]);
+   if(ns==="on" && P.filter(x=>st.status[x]==="on").length>=5)return alert("5 players are already ON.");
+   st.status[n]=ns;render();
+ });
+ document.querySelectorAll("[data-score]").forEach(b=>b.onclick=e=>{
+   e.stopPropagation();
+   const n=b.dataset.score,d=Number(b.dataset.d);
+   if(st.status[n]==="absent")return;
+   st.pts[n]+=d;st.ks+=d;st.undo[n].push(d);
+   render();
+ });
+ document.querySelectorAll("[data-undo]").forEach(b=>b.onclick=e=>{
+   e.stopPropagation();
+   const n=b.dataset.undo,d=st.undo[n].pop();
+   if(!d)return;
+   st.pts[n]=Math.max(0,st.pts[n]-d);
+   st.ks=Math.max(0,st.ks-d);
+   render();
+ });
+}
+
+function adj(s){
+ const q=st.q;
+ if(s>0){
+   const a=Math.min(s,st.rem[q]);
+   st.rem[q]-=a;
+   P.forEach(n=>st.status[n]==="on"&&(st.played[n][q]+=a));
+ }else{
+   const a=Math.min(-s,600-st.rem[q]);
+   st.rem[q]+=a;
+   P.forEach(n=>st.status[n]==="on"&&(st.played[n][q]=Math.max(0,st.played[n][q]-a)));
+ }
+ render();
+}
+
+$("back").onclick=()=>adj(-10);
+$("fwd").onclick=()=>adj(10);
+$("clockReset").onclick=()=>{
+ st.r=false;
+ if(!confirm("Reset the current quarter clock to 10:00? Player minutes stay recorded."))return;
+ st.rem[st.q]=600;render();
+};
+$("start").onclick=()=>{st.r=!st.r;st.last=st.r?Date.now():null;render()};
+setInterval(()=>{
+ if(!st.r)return;
+ const now=Date.now(),e=Math.floor((now-st.last)/1000);
+ if(e<1)return;
+ const d=Math.min(e,st.rem[st.q]);
+ st.rem[st.q]-=d;
+ P.forEach(n=>st.status[n]==="on"&&(st.played[n][st.q]+=d));
+ st.last+=d*1000;
+ if(st.rem[st.q]<=0)st.r=false;
+ render();
+},250);
+
+$("sync").onclick=()=>{
+ st.r=false;
+ let v=prompt("Official scoreboard time — enter 1004 for 10:04 or 710 for 7:10.",fmt(st.rem[st.q]).replace(":",""));
+ if(!v)return;
+ v=v.trim().replace(/\s/g,"");
+ let min,sec;
+ if(v.includes(":")){
+   const m=v.match(/^(\d{1,2}):([0-5]\d)$/);
+   if(!m)return alert("Use a time like 10:04 or 7:10.");
+   min=+m[1];sec=+m[2];
+ }else{
+   if(!/^\d{2,4}$/.test(v))return alert("Use 1004 for 10:04 or 710 for 7:10.");
+   sec=+v.slice(-2);min=+v.slice(0,-2);
+   if(sec>59)return alert("Seconds must be 00–59.");
+ }
+ const official=Math.min(600,min*60+sec),delta=st.rem[st.q]-official;
+ P.forEach(n=>st.status[n]==="on"&&(st.played[n][st.q]=Math.max(0,st.played[n][st.q]+delta)));
+ st.rem[st.q]=official;render();
+};
+
+$("ks").oninput=e=>{st.ks=Math.max(0,+e.target.value||0);save()};
+$("os").oninput=e=>{st.os=Math.max(0,+e.target.value||0);save()};
+
+$("endGame").onclick=()=>{
+ st.r=false;
+ const g=S[st.g],result=st.ks>st.os?"WIN":st.ks<st.os?"LOSS":"TIE";
+ if(!confirm(`END GAME?\n\n${g[0]} vs ${g[2]}\nFinal: Knicks ${st.ks}-${st.os}\nResult: ${result}`))return;
+ const h=hist();
+ h.push({g:st.g,opp:g[2],date:g[0],ks:st.ks,os:st.os,played:st.played,pts:st.pts});
+ localStorage.setItem(H,JSON.stringify(h));
+ st=fresh(Math.min(st.g+1,S.length-1));
+ render();
+};
+
+$("history").onclick=()=>{
+ const h=hist();
+ alert(h.length?h.map(g=>`${S[g.g][0]} • ${g.ks>g.os?"W":g.ks<g.os?"L":"T"} • Knicks ${g.ks}-${g.os} ${g.opp}`).join("\n"):"No games saved yet.");
+};
+$("resetGame").onclick=()=>{
+ if(!confirm("Reset CURRENT game? This clears clock, minutes, statuses, points and score. Saved history stays."))return;
+ st=fresh(st.g);render();
+};
+
+const gameTab=$("gameTab"),clipboardTab=$("clipboardTab"),gameView=$("gameView"),clipboardView=$("clipboardView");
+gameTab.onclick=()=>{gameTab.classList.add("on");clipboardTab.classList.remove("on");gameView.classList.add("on");clipboardView.classList.remove("on")};
+clipboardTab.onclick=()=>{clipboardTab.classList.add("on");gameTab.classList.remove("on");clipboardView.classList.add("on");gameView.classList.remove("on")};
+
+render();
+})();
+</script>
+</body>
+</html>
