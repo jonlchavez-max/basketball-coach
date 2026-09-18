@@ -34,6 +34,10 @@ button{cursor:pointer}
 .nudges{display:flex;justify-content:center;gap:5px;margin-top:4px}
 .nudges .btn{height:27px;font-size:10px}
 
+.gameNav{display:grid;grid-template-columns:1fr auto 1fr;gap:5px;align-items:center;margin-top:6px}
+.gameNav button{height:32px;border:1px solid #343434;border-radius:8px;background:#0d0d0d;color:#fff;font-size:10px;font-weight:950}
+.gameNav button:disabled{opacity:.3;cursor:default}
+.gameNavPos{text-align:center;font-size:9px;color:#aaa;font-weight:900;white-space:nowrap}
 .gameBar{margin-top:6px;display:grid;grid-template-columns:1.35fr .8fr .8fr;gap:5px}
 .gameCell{border:1px solid var(--line);background:#0c0c0c;border-radius:9px;padding:6px 8px;min-height:52px}
 .lab{font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
@@ -85,6 +89,11 @@ button{cursor:pointer}
 .historyBox{max-width:900px;margin:auto;background:#0b0b0b;border:1px solid #333;border-radius:14px;padding:12px}
 .historyHead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.historyTitle{font-size:24px;font-weight:1000}
 .historyClose{height:36px;padding:0 12px;border:1px solid #444;border-radius:8px;background:#151515;color:#fff;font-weight:950}
+.backupTools{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
+.backupTools button{height:36px;border:1px solid #444;border-radius:8px;background:#151515;color:#fff;font-size:10px;font-weight:950}
+.backupTools .exportBtn{border-color:#006BB6;color:#6ec7ff}
+.backupTools .importBtn{border-color:#F58426;color:#ffb56f}
+
 .seasonSummary{display:grid;grid-template-columns:150px 1fr;gap:8px;margin-bottom:10px}.recordCard,.seasonPtsCard{border:1px solid #2c2c2c;border-radius:10px;background:#111;padding:9px}
 .recordBig{font-size:30px;font-weight:1000;color:#F58426}.seasonPtsGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:5px}
 .seasonPlayer{background:#090909;border:1px solid #292929;border-radius:7px;padding:6px;text-align:center}.seasonPlayer b{display:block;font-size:20px;color:#fff}.seasonPlayer span{font-size:9px;color:#aaa}
@@ -166,7 +175,7 @@ button{cursor:pointer}
 </head>
 <body>
 <div class="app">
-  <div id="buildTag" style="text-align:right;font-size:8px;color:#666;font-weight:800;margin:0 2px 2px">KNICKS COACH • LEADERS</div>
+  <div id="buildTag" style="text-align:right;font-size:8px;color:#666;font-weight:800;margin:0 2px 2px">KNICKS COACH • NAV + BACKUP</div>
 <div class="modeTabs">
     <button class="modeTab on" id="gameTab">🏀 GAME</button>
     <button class="modeTab" id="clipboardTab">📋 CLIPBOARD</button>
@@ -189,6 +198,12 @@ button{cursor:pointer}
           <button class="btn" id="start">START</button>
           <button class="btn" id="sync">SYNC</button>
         </div>
+      </div>
+
+      <div class="gameNav">
+        <button id="prevGame">◀ PREV GAME</button>
+        <div class="gameNavPos" id="gameNavPos">GAME 1 OF 8</div>
+        <button id="nextGame">NEXT GAME ▶</button>
       </div>
 
       <div class="gameBar">
@@ -296,6 +311,8 @@ button{cursor:pointer}
 
 <div class="historyModal" id="historyModal"><div class="historyBox">
 <div class="historyHead"><div class="historyTitle">Season History</div><button class="historyClose" id="historyClose">CLOSE</button></div>
+<div class="backupTools"><button class="exportBtn" id="exportBackup">EXPORT SEASON BACKUP</button><button class="importBtn" id="importBackup">IMPORT SEASON BACKUP</button></div>
+<input id="backupFile" type="file" accept=".json,application/json" style="display:none">
 <div class="seasonSummary"><div class="recordCard"><div class="lab">Season Record</div><div class="recordBig" id="historyRecord">0–0</div></div><div class="seasonPtsCard"><div class="lab">Season Points</div><div class="seasonPtsGrid" id="seasonPtsGrid"></div></div></div>
 
 <div class="leadersCard">
@@ -322,7 +339,7 @@ const S=[
 ["Sat 10/31","3 PM","D1 White","AWAY","Court 03"],
 ["Sun 11/8","1 PM","Jags","AWAY","Court 04"]
 ];
-const K="knicks_live_v5_simple",H="knicks_games_v5_simple",$=x=>document.getElementById(x);
+const K="knicks_live_v5_simple",H="knicks_games_v5_simple",D="knicks_game_drafts_v1",$=x=>document.getElementById(x);
 const fresh=g=>({
  g,q:0,rem:[600,600,600,600],
  status:Object.fromEntries(P.map(n=>[n,"off"])),
@@ -359,6 +376,25 @@ const saveHist=h=>{
   localStorage.setItem(H,JSON.stringify(h));
   localStorage.setItem("knicks_games_backup",JSON.stringify(h));
 };
+const drafts=()=>load(D)||{};
+const saveDrafts=d=>localStorage.setItem(D,JSON.stringify(d));
+function saveCurrentDraft(){
+  const d=drafts();
+  d[st.g]=JSON.parse(JSON.stringify({...st,r:false,last:null}));
+  saveDrafts(d);
+}
+function loadGameState(g){
+  const d=drafts(),saved=d[g];
+  return saved?JSON.parse(JSON.stringify({...saved,g,r:false,last:null})):fresh(g);
+}
+function goGame(delta){
+  st.r=false;
+  saveCurrentDraft();
+  const target=Math.max(0,Math.min(S.length-1,st.g+delta));
+  if(target===st.g){render();return}
+  st=loadGameState(target);
+  render();
+}
 function normalizeGame(g){g.pts=g.pts||Object.fromEntries(P.map(n=>[n,0]));P.forEach(n=>{if(g.pts[n]===undefined)g.pts[n]=0});return g}
 function recordText(){let w=0,l=0;hist().forEach(raw=>{const g=normalizeGame(raw);if(g.ks>g.os)w++;else if(g.ks<g.os)l++});return `${w}–${l}`}
 function seasonPoints(){const out=Object.fromEntries(P.map(n=>[n,0]));hist().forEach(raw=>{const g=normalizeGame(raw);P.forEach(n=>out[n]+=Number(g.pts[n]||0))});return out}
@@ -421,6 +457,9 @@ function render(){
  const g=S[st.g]||S[0];
  $("opp").textContent=g[2];
  $("meta").textContent=`${g[0]} • ${g[1]} • ${g[3]} • ${g[4]}`;
+ $("gameNavPos").textContent=`GAME ${st.g+1} OF ${S.length}`;
+ $("prevGame").disabled=st.g<=0;
+ $("nextGame").disabled=st.g>=S.length-1;
  $("ks").value=st.ks;$("os").value=st.os;if($("record"))$("record").textContent=recordText();
 
  const box=$("players");box.innerHTML="";
@@ -463,6 +502,8 @@ function adj(s){
  render();
 }
 
+$("prevGame").onclick=()=>goGame(-1);
+$("nextGame").onclick=()=>goGame(1);
 $("back").onclick=()=>adj(-10);
 $("fwd").onclick=()=>adj(10);
 $("clockReset").onclick=()=>{
@@ -511,9 +552,13 @@ $("endGame").onclick=()=>{
  const g=S[st.g],result=st.ks>st.os?"WIN":st.ks<st.os?"LOSS":"TIE";
  if(!confirm(`END GAME?\n\n${g[0]} vs ${g[2]}\nFinal: Knicks ${st.ks}-${st.os}\nResult: ${result}`))return;
  const h=hist();
- h.push({g:st.g,opp:g[2],date:g[0],ks:st.ks,os:st.os,played:st.played,pts:{...st.pts}});
+ const completed={g:st.g,opp:g[2],date:g[0],ks:st.ks,os:st.os,played:st.played,pts:{...st.pts}};
+ const existing=h.findIndex(x=>Number(x.g)===Number(st.g));
+ if(existing>=0)h[existing]=completed;else h.push(completed);
+ h.sort((a,b)=>Number(a.g??999)-Number(b.g??999));
  saveHist(h);
- st=fresh(Math.min(st.g+1,S.length-1));
+ const d=drafts();delete d[st.g];saveDrafts(d);
+ st=loadGameState(Math.min(st.g+1,S.length-1));
  render();
 };
 
@@ -527,9 +572,35 @@ $("historyClose").onclick=()=>{$("historyModal").classList.remove("on");$("editP
 $("cancelGameEdit").onclick=()=>{$("editPanel").classList.remove("on");editIndex=null};
 $("copyLivePts").onclick=()=>{if(editIndex===null)return;document.querySelectorAll("[data-editpt]").forEach(inp=>inp.value=st.pts[inp.dataset.editpt]||0);$("editKs").value=st.ks};
 $("saveGameEdit").onclick=()=>{if(editIndex===null)return;const h=hist().map(normalizeGame),g=h[editIndex];if(!g)return;g.ks=Math.max(0,Number($("editKs").value)||0);g.os=Math.max(0,Number($("editOs").value)||0);document.querySelectorAll("[data-editpt]").forEach(inp=>g.pts[inp.dataset.editpt]=Math.max(0,Number(inp.value)||0));h[editIndex]=g;saveHist(h);$("editPanel").classList.remove("on");editIndex=null;renderHistory();render()};
+$("exportBackup").onclick=()=>{
+ const payload={app:"Knicks Season Tracker",version:1,exportedAt:new Date().toISOString(),history:hist(),drafts:drafts(),live:{...st,r:false,last:null}};
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+ const url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download=`knicks-season-backup-${new Date().toISOString().slice(0,10)}.json`;
+ document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+};
+$("importBackup").onclick=()=>$("backupFile").click();
+$("backupFile").onchange=e=>{
+ const file=e.target.files&&e.target.files[0];if(!file)return;
+ const reader=new FileReader();
+ reader.onload=()=>{
+   try{
+     const data=JSON.parse(reader.result);
+     if(!data||!Array.isArray(data.history))throw new Error("Invalid backup");
+     if(!confirm(`Import backup with ${data.history.length} completed game(s)? This will replace the season history currently stored on this device.`))return;
+     saveHist(data.history);
+     if(data.drafts&&typeof data.drafts==="object")saveDrafts(data.drafts);
+     if(data.live&&typeof data.live==="object"){st={...data.live,r:false,last:null};localStorage.setItem(K,JSON.stringify(st))}
+     renderHistory();render();alert("Season backup imported.");
+   }catch(err){alert("That file is not a valid Knicks Season Tracker backup.");}
+   e.target.value="";
+ };
+ reader.readAsText(file);
+};
 $("resetGame").onclick=()=>{
  if(!confirm("Reset CURRENT game? This clears clock, minutes, statuses, points and score. Saved history stays."))return;
- st=fresh(st.g);render();
+ const g=st.g,d=drafts();delete d[g];saveDrafts(d);
+ st=fresh(g);render();
 };
 
 const gameTab=$("gameTab"),clipboardTab=$("clipboardTab"),gameView=$("gameView"),clipboardView=$("clipboardView");
