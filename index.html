@@ -332,8 +332,33 @@ const fresh=g=>({
  ks:0,os:0,r:false,last:null
 });
 const load=k=>{try{return JSON.parse(localStorage.getItem(k))}catch{return null}};
-const hist=()=>load(H)||[];
-const saveHist=h=>localStorage.setItem(H,JSON.stringify(h));
+
+const LEGACY_H=["knicks_games_v4","knicks_games_v3","knicks_games_v2","knicks_games"];
+let recoveredHistory=load(H);
+
+if(!Array.isArray(recoveredHistory)||recoveredHistory.length===0){
+  for(const oldKey of LEGACY_H){
+    const oldHistory=load(oldKey);
+    if(Array.isArray(oldHistory)&&oldHistory.length){
+      localStorage.setItem(H,JSON.stringify(oldHistory));
+      localStorage.setItem("knicks_games_backup",JSON.stringify(oldHistory));
+      recoveredHistory=oldHistory;
+      break;
+    }
+  }
+}
+
+const hist=()=>{
+  const current=load(H);
+  if(Array.isArray(current)&&current.length)return current;
+  const backup=load("knicks_games_backup");
+  return Array.isArray(backup)?backup:[];
+};
+
+const saveHist=h=>{
+  localStorage.setItem(H,JSON.stringify(h));
+  localStorage.setItem("knicks_games_backup",JSON.stringify(h));
+};
 function normalizeGame(g){g.pts=g.pts||Object.fromEntries(P.map(n=>[n,0]));P.forEach(n=>{if(g.pts[n]===undefined)g.pts[n]=0});return g}
 function recordText(){let w=0,l=0;hist().forEach(raw=>{const g=normalizeGame(raw);if(g.ks>g.os)w++;else if(g.ks<g.os)l++});return `${w}–${l}`}
 function seasonPoints(){const out=Object.fromEntries(P.map(n=>[n,0]));hist().forEach(raw=>{const g=normalizeGame(raw);P.forEach(n=>out[n]+=Number(g.pts[n]||0))});return out}
