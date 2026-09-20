@@ -171,11 +171,17 @@ button{cursor:pointer}
 .leaderRow:first-child{border-color:#F58426;background:#251306}
 .leaderRow:first-child .leaderRank,.leaderRow:first-child .leaderPts b{color:#F58426}
 
+
+.cloudTools{border:1px solid #2a2a2a;border-radius:10px;padding:8px;margin-bottom:10px;background:#0b0b0b}
+.cloudRow{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+.cloudTools input{width:100%;height:36px;border:1px solid #444;border-radius:8px;background:#151515;color:#fff;padding:0 9px;font-size:11px;margin-top:6px}
+.cloudTools button{height:36px;border:1px solid #444;border-radius:8px;background:#151515;color:#fff;font-size:10px;font-weight:950}
+.cloudStatus{font-size:10px;font-weight:900;color:#aaa}.cloudStatus.ok{color:#70d68c}.cloudStatus.err{color:#ff7777}
 </style>
 </head>
 <body>
 <div class="app">
-  <div id="buildTag" style="text-align:right;font-size:8px;color:#666;font-weight:800;margin:0 2px 2px">KNICKS COACH • NAV + BACKUP</div>
+  <div id="buildTag" style="text-align:right;font-size:8px;color:#666;font-weight:800;margin:0 2px 2px">KNICKS COACH • CLOUD SYNC</div>
 <div class="modeTabs">
     <button class="modeTab on" id="gameTab">🏀 GAME</button>
     <button class="modeTab" id="clipboardTab">📋 CLIPBOARD</button>
@@ -311,6 +317,12 @@ button{cursor:pointer}
 
 <div class="historyModal" id="historyModal"><div class="historyBox">
 <div class="historyHead"><div class="historyTitle">Season History</div><button class="historyClose" id="historyClose">CLOSE</button></div>
+<div class="cloudTools">
+  <div class="cloudStatus" id="cloudStatus">CLOUD: SIGNED OUT — LOCAL SAVES ACTIVE</div>
+  <input id="cloudEmail" type="email" autocomplete="username" value="jaymayo1002@gmail.com" placeholder="Email">
+  <input id="cloudPassword" type="password" autocomplete="current-password" placeholder="Firebase password">
+  <div class="cloudRow"><button id="cloudSignIn">SIGN IN / SYNC</button><button id="cloudSignOut">SIGN OUT</button></div>
+</div>
 <div class="backupTools"><button class="exportBtn" id="exportBackup">EXPORT SEASON BACKUP</button><button class="importBtn" id="importBackup">IMPORT SEASON BACKUP</button></div>
 <input id="backupFile" type="file" accept=".json,application/json" style="display:none">
 <div class="seasonSummary"><div class="recordCard"><div class="lab">Season Record</div><div class="recordBig" id="historyRecord">0–0</div></div><div class="seasonPtsCard"><div class="lab">Season Points</div><div class="seasonPtsGrid" id="seasonPtsGrid"></div></div></div>
@@ -326,7 +338,20 @@ button{cursor:pointer}
 <div class="editActions"><button class="saveEdit" id="saveGameEdit">SAVE CHANGES</button><button class="cancelEdit" id="cancelGameEdit">CANCEL</button></div></div>
 </div></div>
 
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore-compat.js"></script>
 <script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCM7dXE_xkORIYOf17W3pMdzO68VlkCcOQ",
+  authDomain: "knicks-basketball-coach.firebaseapp.com",
+  projectId: "knicks-basketball-coach",
+  storageBucket: "knicks-basketball-coach.firebasestorage.app",
+  messagingSenderId: "1061348433279",
+  appId: "1:1061348433279:web:375cc52ebcc11eb4c58e4a"
+};
+firebase.initializeApp(firebaseConfig);
+const fbAuth=firebase.auth(),fbDb=firebase.firestore();
 (()=>{
 const P=["Zane","Ethan","Vivaan","Max","Niam","Jonah","Nhonebong","Justin","Sidarth","Krew"];
 const S=[
@@ -375,9 +400,10 @@ const hist=()=>{
 const saveHist=h=>{
   localStorage.setItem(H,JSON.stringify(h));
   localStorage.setItem("knicks_games_backup",JSON.stringify(h));
+  cloudSave(true);
 };
 const drafts=()=>load(D)||{};
-const saveDrafts=d=>localStorage.setItem(D,JSON.stringify(d));
+const saveDrafts=d=>{localStorage.setItem(D,JSON.stringify(d));cloudSave(true)};
 function saveCurrentDraft(){
   const d=drafts();
   d[st.g]=JSON.parse(JSON.stringify({...st,r:false,last:null}));
@@ -406,11 +432,43 @@ P.forEach(n=>{
  if(!st.undo[n])st.undo[n]=[];
 });
 st.r=false;st.last=null;
+
+let cloudReady=false,cloudBusy=false,lastCloudSave=0;
+const cloudDoc=()=>fbAuth.currentUser?fbDb.collection("coachData").doc(fbAuth.currentUser.uid):null;
+function cloudStatus(msg,kind=""){const e=$("cloudStatus");if(!e)return;e.textContent=msg;e.className="cloudStatus "+kind}
+function cloudPayload(){return {version:2,history:hist(),drafts:drafts(),live:{...st,r:false,last:null},updatedAt:firebase.firestore.FieldValue.serverTimestamp()}}
+async function cloudSave(force=false){
+  if(!cloudReady||!fbAuth.currentUser||cloudBusy)return;
+  const now=Date.now();if(!force&&now-lastCloudSave<30000)return;
+  cloudBusy=true;
+  try{await cloudDoc().set(cloudPayload(),{merge:true});lastCloudSave=Date.now();cloudStatus("CLOUD: SAVED","ok")}
+  catch(e){console.error(e);cloudStatus("CLOUD: SAVE FAILED — LOCAL SAVES SAFE","err")}
+  finally{cloudBusy=false}
+}
+async function cloudInitialSync(user){
+  cloudBusy=true;cloudStatus("CLOUD: SYNCING…");
+  try{
+    const ref=cloudDoc(),snap=await ref.get();
+    if(snap.exists){
+      const data=snap.data()||{};
+      if(Array.isArray(data.history))saveHistLocal(data.history);
+      if(data.drafts&&typeof data.drafts==="object")localStorage.setItem(D,JSON.stringify(data.drafts));
+      if(data.live&&typeof data.live==="object"){st={...data.live,r:false,last:null};localStorage.setItem(K,JSON.stringify(st))}
+      cloudStatus("CLOUD: LOADED & CONNECTED","ok");render();
+    }else{
+      await ref.set(cloudPayload());lastCloudSave=Date.now();cloudStatus("CLOUD: FIRST BACKUP SAVED","ok");
+    }
+    cloudReady=true;
+  }catch(e){console.error(e);cloudStatus("CLOUD: SYNC FAILED — LOCAL SAVES SAFE","err");cloudReady=false}
+  finally{cloudBusy=false}
+}
+function saveHistLocal(h){localStorage.setItem(H,JSON.stringify(h));localStorage.setItem("knicks_games_backup",JSON.stringify(h))}
+
 const fmt=s=>Math.floor(Math.max(0,s)/60)+":"+String(Math.round(Math.max(0,s))%60).padStart(2,"0");
 const halfPlayed=n=>st.q<2?(st.played[n][0]+st.played[n][1]):(st.played[n][2]+st.played[n][3]);
 const halfNeed=n=>Math.max(0,300-halfPlayed(n));
 
-function save(){localStorage.setItem(K,JSON.stringify(st))}
+function save(){localStorage.setItem(K,JSON.stringify(st));cloudSave(false)}
 function nextStatus(s){return s==="on"?"off":s==="off"?"absent":"on"}
 
 function card(n){
@@ -591,7 +649,7 @@ $("backupFile").onchange=e=>{
      saveHist(data.history);
      if(data.drafts&&typeof data.drafts==="object")saveDrafts(data.drafts);
      if(data.live&&typeof data.live==="object"){st={...data.live,r:false,last:null};localStorage.setItem(K,JSON.stringify(st))}
-     renderHistory();render();alert("Season backup imported.");
+     renderHistory();render();cloudSave(true);alert("Season backup imported.");
    }catch(err){alert("That file is not a valid Knicks Season Tracker backup.");}
    e.target.value="";
  };
@@ -600,7 +658,7 @@ $("backupFile").onchange=e=>{
 $("resetGame").onclick=()=>{
  if(!confirm("Reset CURRENT game? This clears clock, minutes, statuses, points and score. Saved history stays."))return;
  const g=st.g,d=drafts();delete d[g];saveDrafts(d);
- st=fresh(g);render();
+ st=fresh(g);render();cloudSave(true);
 };
 
 const gameTab=$("gameTab"),clipboardTab=$("clipboardTab"),gameView=$("gameView"),clipboardView=$("clipboardView");
@@ -665,6 +723,22 @@ $("clipDraw").onclick=()=>{drawOn=!drawOn;canvas.classList.toggle("on",drawOn);$
 $("clipUndo").onclick=()=>{strokes.pop();redraw()};
 $("clipClear").onclick=()=>{strokes=[];redraw()};
 window.addEventListener("resize",()=>requestAnimationFrame(sizeCanvas));
+
+$("cloudSignIn").onclick=async()=>{
+ const email=$("cloudEmail").value.trim(),password=$("cloudPassword").value;
+ if(!email||!password)return alert("Enter your Firebase email and password.");
+ cloudStatus("CLOUD: SIGNING IN…");
+ try{await fbAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);await fbAuth.signInWithEmailAndPassword(email,password);$("cloudPassword").value=""}
+ catch(e){console.error(e);cloudStatus("CLOUD: SIGN-IN FAILED","err");alert("Firebase sign-in failed. Check the email/password and try again.")}
+};
+$("cloudSignOut").onclick=async()=>{cloudReady=false;await fbAuth.signOut();cloudStatus("CLOUD: SIGNED OUT — LOCAL SAVES ACTIVE")};
+fbAuth.onAuthStateChanged(user=>{
+ if(user){$("cloudEmail").value=user.email||$("cloudEmail").value;cloudInitialSync(user)}
+ else{cloudReady=false;cloudStatus("CLOUD: SIGNED OUT — LOCAL SAVES ACTIVE")}
+});
+window.addEventListener("pagehide",()=>cloudSave(true));
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")cloudSave(true)});
+
 setPlay("helpball");
 render();
 })();
