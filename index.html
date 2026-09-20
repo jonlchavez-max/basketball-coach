@@ -434,11 +434,78 @@ html,body{
   }
 }
 
+
+/* ===== HARD iPHONE OVERRIDE v2 ===== */
+@media screen and (max-width:700px){
+  html,body{
+    width:100% !important;
+    max-width:100vw !important;
+    overflow-x:hidden !important;
+  }
+  .app{
+    width:100% !important;
+    max-width:100vw !important;
+    padding:5px !important;
+    overflow-x:hidden !important;
+  }
+  .players{
+    display:block !important;
+    width:100% !important;
+    max-width:100% !important;
+  }
+  .card{
+    display:grid !important;
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    margin:0 0 6px 0 !important;
+    padding:9px 10px !important;
+    grid-template-columns:minmax(0,1fr) 74px !important;
+    grid-template-areas:
+      "name status"
+      "time status"
+      "alert status"
+      "score score" !important;
+    column-gap:8px !important;
+  }
+  .name{font-size:27px !important;min-width:0 !important}
+  .statusBtn{width:74px !important;min-width:74px !important}
+  .scoreTools{
+    width:100% !important;
+    min-width:0 !important;
+    grid-template-columns:72px minmax(0,1fr) !important;
+    gap:5px !important;
+  }
+  .pointsBox{min-width:0 !important}
+  .scoreBtns{
+    width:100% !important;
+    min-width:0 !important;
+    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    gap:4px !important;
+  }
+  .scoreBtns button{
+    width:100% !important;
+    min-width:0 !important;
+    padding:0 2px !important;
+  }
+  .gameNav{
+    width:100% !important;
+    grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) !important;
+  }
+  .gameNav button{min-width:0 !important;width:100% !important}
+  .gameBar{
+    width:100% !important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
+  }
+  .gameBar .gameCell:first-child{grid-column:1/-1 !important}
+  .gameCell{min-width:0 !important}
+}
+
 </style>
 </head>
 <body>
 <div class="app">
-  <div id="buildTag" style="text-align:right;font-size:8px;color:#666;font-weight:800;margin:0 2px 2px">KNICKS COACH • CLOUD SYNC</div>
+  <div id="buildTag" style="text-align:right;font-size:8px;color:#666;font-weight:800;margin:0 2px 2px">KNICKS COACH • MOBILE FIX V2</div>
 <div class="modeTabs">
     <button class="modeTab on" id="gameTab">🏀 GAME</button>
     <button class="modeTab" id="clipboardTab">📋 CLIPBOARD</button>
