@@ -110,7 +110,7 @@ button{cursor:pointer}
 .clipboard{padding:3px 0 10px}
 .clipTitle{font-size:25px;font-weight:1000;margin:5px 0 2px}
 .clipIntro{font-size:11px;color:#aaa;margin-bottom:8px}
-.clipCats{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:7px}
+.clipCats{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:7px}
 .clipCat{height:39px;border:1px solid #343434;border-radius:9px;background:#0d0d0d;color:#aaa;font-size:9px;font-weight:1000}
 .clipCat.on{color:#fff;border-color:#0b84d8;background:#071a2a}
 .clipGroup{display:none}.clipGroup.on{display:block}
@@ -128,7 +128,7 @@ button{cursor:pointer}
 .clipHeadTitle{font-size:18px;font-weight:1000}.clipSub{font-size:10px;color:#aaa;margin-top:2px}
 .clipCall{border:1px solid #343434;border-radius:8px;background:#050505;padding:6px 8px;font-size:10px;font-weight:950;white-space:nowrap}
 .clipStage{position:relative;overflow:hidden;background:#eef4f8;border-radius:9px}
-.clipStage svg{display:block;width:100%;height:auto;max-height:520px}
+.clipStage svg{display:block;width:100%;height:auto;max-height:none}
 .clipCanvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;pointer-events:none}.clipCanvas.on{pointer-events:auto}
 .clipRule{margin-top:6px;text-align:center;background:#080808;border:1px solid #292929;border-radius:8px;padding:7px;font-size:10px;font-weight:950}
 .courtLine{fill:none;stroke:#23313d;stroke-width:2}
@@ -235,34 +235,41 @@ button{cursor:pointer}
 
   <div class="modeView" id="clipboardView">
     <div class="clipboard">
-      <div class="clipTitle">PRACTICE 2</div>
-      <div class="clipIntro">Game-film priorities + our original play diagrams. Tap a play, then draw on top of it if you want.</div>
+      <div class="clipTitle">KNICKS PLAYBOOK</div>
+      <div class="clipIntro">Season playbook. Tap a play, then draw on top of it if you want.</div>
 
       <div class="clipCats">
-        <button class="clipCat on" data-cat="practice2">PRACTICE 2</button>
-        <button class="clipCat" data-cat="offense">OFFENSE</button>
-        <button class="clipCat" data-cat="transition">TRANSITION</button>
+        <button class="clipCat on" data-cat="offense">OFFENSE</button>
         <button class="clipCat" data-cat="defense">DEFENSE</button>
+        <button class="clipCat" data-cat="transition">TRANSITION</button>
         <button class="clipCat" data-cat="blank">✏️ BLANK</button>
       </div>
 
-      <div class="clipGroup on" data-group="practice2">
+      <div class="clipGroup on" data-group="offense">
         <div class="clipPlayGrid">
-          <button class="clipPlay on" data-play="helpball">HELP THE BALL<small>Nearest teammate rescues</small></button>
-          <button class="clipPlay" data-play="passmove">PASS → MOVE<small>Pass, then cut</small></button>
-          <button class="clipPlay" data-play="rebound">SHOT → REBOUND<small>No watching</small></button>
-          <button class="clipPlay" data-play="getback">TURNOVER → BACK<small>Protect our basket</small></button>
-          <button class="clipPlay" data-play="meetpass">MEET THE PASS<small>Come toward the ball</small></button>
-          <button class="clipPlay" data-play="seetwo">SEE TWO<small>Player + ball</small></button>
-        </div>
-      </div>
-
-      <div class="clipGroup" data-group="offense">
-        <div class="clipPlayGrid">
-          <button class="clipPlay" data-play="spots">5-SPOT SPACING<small>Starting spots</small></button>
+          <button class="clipPlay on" data-play="spots">5-SPOT SPACING<small>Starting spots</small></button>
           <button class="clipPlay" data-play="motion">PASS → CUT → FILL<small>Base movement</small></button>
           <button class="clipPlay" data-play="givego">GIVE & GO<small>Pass, cut, get it back</small></button>
           <button class="clipPlay" data-play="screen">SCREEN & ROLL<small>Simple 1 + 4 action</small></button>
+          <button class="clipPlay" data-play="drivekick">DRIVE & KICK<small>Attack, then find space</small></button>
+          <button class="clipPlay" data-play="backdoor">BACKDOOR CUT<small>Defender overplays</small></button>
+          <button class="clipPlay" data-play="postcut">POST ENTRY + CUT<small>Feed big, then move</small></button>
+          <button class="clipPlay" data-play="boxinbound">BOX INBOUND<small>Four safe options</small></button>
+          <button class="clipPlay" data-play="sideline">SIDELINE SAFE<small>Short passes first</small></button>
+        </div>
+      </div>
+
+      <div class="clipGroup" data-group="defense">
+        <div class="clipPlayGrid">
+          <button class="clipPlay" data-play="zone">2-1-2 ZONE<small>Starting positions</small></button>
+          <button class="clipPlay" data-play="slideright">ZONE — BALL RIGHT<small>Five slide together</small></button>
+          <button class="clipPlay" data-play="slideleft">ZONE — BALL LEFT<small>Five slide together</small></button>
+          <button class="clipPlay" data-play="corner">BALL IN CORNER<small>Pressure + protect rim</small></button>
+          <button class="clipPlay" data-play="protectpost">PROTECT THE POST<small>Do not abandon middle</small></button>
+          <button class="clipPlay" data-play="trap">DOUBLE-TEAM<small>After half court</small></button>
+          <button class="clipPlay" data-play="recovertrap">RECOVER FROM TRAP<small>Return to zones</small></button>
+          <button class="clipPlay" data-play="stoprebound">STOP + REBOUND<small>Finish the possession</small></button>
+          <button class="clipPlay" data-play="mantoman">MAN-TO-MAN<small>Fallback defense</small></button>
         </div>
       </div>
 
@@ -270,17 +277,12 @@ button{cursor:pointer}
         <div class="clipPlayGrid">
           <button class="clipPlay" data-play="outlet">REBOUND → OUTLET<small>Big rebounds, guard gets wide</small></button>
           <button class="clipPlay" data-play="fastbreak">3-LANE BREAK<small>Left • Middle • Right</small></button>
+          <button class="clipPlay" data-play="twoone">2-ON-1<small>Make defender choose</small></button>
+          <button class="clipPlay" data-play="threeTwo">3-ON-2<small>Wide lanes + middle</small></button>
+          <button class="clipPlay" data-play="getback">TURNOVER → BACK<small>Protect our basket</small></button>
           <button class="clipPlay" data-play="pressbreak">PRESS BREAK<small>Meet the pass</small></button>
-          <button class="clipPlay" data-play="inbound">BASELINE INBOUND<small>Short safe options</small></button>
-        </div>
-      </div>
-
-      <div class="clipGroup" data-group="defense">
-        <div class="clipPlayGrid">
-          <button class="clipPlay" data-play="zone">2-1-2 ZONE<small>Starting positions</small></button>
-          <button class="clipPlay" data-play="slide">ZONE SLIDE<small>Move with the ball</small></button>
-          <button class="clipPlay" data-play="trap">DOUBLE-TEAM<small>After half court</small></button>
-          <button class="clipPlay" data-play="stoprebound">STOP + REBOUND<small>Finish the possession</small></button>
+          <button class="clipPlay" data-play="meetpass">MEET THE PASS<small>Come toward the ball</small></button>
+          <button class="clipPlay" data-play="inbound">INBOUND → GO<small>Get down court</small></button>
         </div>
       </div>
 
@@ -297,11 +299,11 @@ button{cursor:pointer}
 
       <div class="clipCard">
         <div class="clipHead">
-          <div><div class="clipHeadTitle" id="clipHeadTitle">HELP THE BALL</div><div class="clipSub" id="clipSub">One helper comes to the ball. Everyone else stays useful.</div></div>
-          <div class="clipCall" id="clipCall">“HELP — DON’T CROWD!”</div>
+          <div><div class="clipHeadTitle" id="clipHeadTitle">5-SPOT SPACING</div><div class="clipSub" id="clipSub">Get to starting spots, then move.</div></div>
+          <div class="clipCall" id="clipCall">“SPOTS!”</div>
         </div>
         <div class="clipStage" id="clipStage"><div id="clipDiagram"></div><canvas class="clipCanvas" id="clipCanvas"></canvas></div>
-        <div class="clipRule" id="clipRule">NEAREST TEAMMATE HELPS • EVERYONE ELSE STAYS OUT</div>
+        <div class="clipRule" id="clipRule">1 TOP • 2 & 3 WINGS • 4 & 5 BIGS</div>
       </div>
     </div>
   </div>
@@ -339,6 +341,13 @@ const S=[
 ["Sat 10/31","3 PM","D1 White","AWAY","Court 03"],
 ["Sun 11/8","1 PM","Jags","AWAY","Court 04"]
 ];
+const GAME_DATES=["2026-09-06","2026-09-20","2026-09-27","2026-10-04","2026-10-17","2026-10-24","2026-10-31","2026-11-08"];
+function upcomingGameIndex(){
+  const today=new Date(); today.setHours(0,0,0,0);
+  const i=GAME_DATES.findIndex(d=>new Date(d+"T00:00:00").getTime()>=today.getTime());
+  return i<0?S.length-1:i;
+}
+
 const K="knicks_live_v5_simple",H="knicks_games_v5_simple",D="knicks_game_drafts_v1",$=x=>document.getElementById(x);
 const fresh=g=>({
  g,q:0,rem:[600,600,600,600],
@@ -398,7 +407,9 @@ function goGame(delta){
 function normalizeGame(g){g.pts=g.pts||Object.fromEntries(P.map(n=>[n,0]));P.forEach(n=>{if(g.pts[n]===undefined)g.pts[n]=0});return g}
 function recordText(){let w=0,l=0;hist().forEach(raw=>{const g=normalizeGame(raw);if(g.ks>g.os)w++;else if(g.ks<g.os)l++});return `${w}–${l}`}
 function seasonPoints(){const out=Object.fromEntries(P.map(n=>[n,0]));hist().forEach(raw=>{const g=normalizeGame(raw);P.forEach(n=>out[n]+=Number(g.pts[n]||0))});return out}
-let st=load(K)||fresh(0);
+const landingGame=upcomingGameIndex();
+let st=load(K)||fresh(landingGame);
+if(Number(st.g)<landingGame) st=loadGameState(landingGame);
 P.forEach(n=>{
  if(!st.status||!st.status[n]){st.status=st.status||{};st.status[n]="off"}
  if(!st.played[n])st.played[n]=[0,0,0,0];
@@ -636,6 +647,20 @@ zone:{t:"2-1-2 ZONE",s:"Simple starting positions.",c:"“ZONE!”",r:"2 UP • 
 slide:{t:"ZONE SLIDE",s:"Everyone moves together with the ball.",c:"“SLIDE!”",r:"BALL MOVES → FIVE MOVE",svg:halfCourt(CP(170,190,"1","defPlayer")+CP(330,190,"2","defPlayer")+CP(250,285,"3","defPlayer")+CP(150,365,"4","defPlayer")+CP(350,365,"5","defPlayer")+BALL(410,175)+MOVE(170,190,240,190)+MOVE(330,190,380,190)+MOVE(250,285,315,285)+MOVE(150,365,215,365)+MOVE(350,365,390,365))},
 trap:{t:"DOUBLE-TEAM",s:"Only after half court.",c:"“TRAP!”",r:"TWO TO BALL • OTHERS SEE TWO",svg:halfCourt(BALL(390,205)+CP(330,205,"1","defPlayer")+CP(360,270,"2","defPlayer")+CP(220,280,"3","defPlayer")+CP(150,365,"4","defPlayer")+CP(340,365,"5","defPlayer")+MOVE(330,205,375,215)+MOVE(360,270,385,230))},
 stoprebound:{t:"STOP + REBOUND",s:"A stop is not done until we get the ball.",c:"“STOP — REBOUND!”",r:"CONTEST • BOX OUT • GET BALL",svg:halfCourt(CP(170,220,"1","defPlayer")+CP(330,220,"2","defPlayer")+CP(250,300,"3","defPlayer")+CP(170,365,"4","defPlayer")+CP(330,365,"5","defPlayer")+BALL(250,150)+MOVE(170,365,220,400)+MOVE(330,365,280,400))},
+
+drivekick:{t:"DRIVE & KICK",s:"Attack the lane. If help comes, pass to open space.",c:"“DRIVE — FIND!”",r:"ATTACK • DRAW HELP • PASS TO SPACE",svg:halfCourt(CP(250,130,"1")+BALL(270,130)+CP(105,230,"2")+CP(395,230,"3")+CP(165,350,"4")+CP(335,350,"5")+MOVE(250,155,275,315)+PASS(275,315,395,230))},
+backdoor:{t:"BACKDOOR CUT",s:"When a defender overplays the pass, cut behind to the rim.",c:"“BACKDOOR!”",r:"OVERPLAY → CUT BEHIND → SHORT PASS",svg:halfCourt(CP(250,130,"1")+BALL(270,130)+CP(105,230,"2")+MOVE(105,230,215,365)+PASS(250,130,215,365)+TXT(150,290,"CUT"))},
+postcut:{t:"POST ENTRY + CUT",s:"Feed the post, then cut through instead of standing.",c:"“FEED — CUT!”",r:"POST ENTRY • PASSER CUTS • OTHERS SPACE",svg:halfCourt(CP(250,125,"1")+BALL(270,125)+CP(165,345,"4")+CP(100,225,"2")+CP(400,225,"3")+CP(335,350,"5")+PASS(250,125,165,345)+MOVE(250,155,305,385))},
+boxinbound:{t:"BOX INBOUND",s:"Four players form a box, then break to safe spaces.",c:"“BREAK!”",r:"SHORT SAFE PASS FIRST • NO LOBS",svg:halfCourt(CP(250,445,"1")+BALL(270,445)+CP(170,330,"2")+CP(330,330,"3")+CP(170,235,"4")+CP(330,235,"5")+MOVE(170,330,105,285)+MOVE(330,330,395,285)+MOVE(170,235,230,200)+MOVE(330,235,270,200))},
+sideline:{t:"SIDELINE SAFE",s:"Give the inbounder a short option, middle option and deep option.",c:"“COME TO BALL!”",r:"SHORT FIRST • MEET PASS • DEEP PLAYER CLEARS",svg:halfCourt(CP(480,260,"1")+BALL(460,260)+CP(370,215,"2")+CP(300,300,"3")+CP(190,205,"4")+CP(250,380,"5")+MOVE(370,215,405,245)+PASS(480,260,405,245))},
+slideright:{t:"ZONE — BALL RIGHT",s:"All five defenders slide toward the ball without abandoning the paint.",c:"“SLIDE RIGHT!”",r:"PRESSURE BALL • FILL GAPS • PROTECT POST",svg:halfCourt(CP(235,190,"1","defPlayer")+CP(380,190,"2","defPlayer")+CP(305,285,"3","defPlayer")+CP(215,365,"4","defPlayer")+CP(390,365,"5","defPlayer")+BALL(430,175))},
+slideleft:{t:"ZONE — BALL LEFT",s:"Mirror the zone slide when the ball moves left.",c:"“SLIDE LEFT!”",r:"PRESSURE BALL • FILL GAPS • PROTECT POST",svg:halfCourt(CP(120,190,"1","defPlayer")+CP(265,190,"2","defPlayer")+CP(195,285,"3","defPlayer")+CP(110,365,"4","defPlayer")+CP(285,365,"5","defPlayer")+BALL(70,175))},
+corner:{t:"BALL IN CORNER",s:"Low defender pressures. Middle protects rim. Everyone else pinches in.",c:"“CORNER!”",r:"LOW DEFENDER BALL • MIDDLE RIM • WEAK SIDE IN",svg:halfCourt(BALL(440,370)+CP(250,190,"1","defPlayer")+CP(365,220,"2","defPlayer")+CP(285,315,"3","defPlayer")+CP(175,375,"4","defPlayer")+CP(395,375,"5","defPlayer")+MOVE(395,375,430,365))},
+protectpost:{t:"PROTECT THE POST",s:"The middle defender stays home when the ball moves outside.",c:"“DON’T LEAVE THE POST!”",r:"MIDDLE STAYS HOME • OUTSIDE DEFENDERS PRESSURE",svg:halfCourt(BALL(420,190)+CP(200,190,"1","defPlayer")+CP(365,190,"2","defPlayer")+CP(250,315,"3","defPlayer")+CP(155,375,"4","defPlayer")+CP(345,375,"5","defPlayer")+TXT(250,275,"STAY"))},
+recovertrap:{t:"RECOVER FROM TRAP",s:"When the ball escapes the double-team, sprint back to 2-1-2 spots.",c:"“RECOVER!”",r:"TRAP ENDS → FIND ZONE → HANDS UP",svg:halfCourt(BALL(390,205)+CP(355,220,"1","defPlayer")+CP(390,260,"2","defPlayer")+CP(250,285,"3","defPlayer")+CP(150,365,"4","defPlayer")+CP(350,365,"5","defPlayer")+MOVE(355,220,170,190)+MOVE(390,260,330,190))},
+mantoman:{t:"MAN-TO-MAN",s:"Fallback defense: each defender stays between their player and the basket.",c:"“YOU + YOUR PLAYER!”",r:"BALL • PLAYER • BASKET",svg:halfCourt(CP(125,185,"1")+CP(375,185,"2")+CP(250,275,"3")+CP(155,355,"4")+CP(345,355,"5")+CP(150,215,"1","defPlayer")+CP(350,215,"2","defPlayer")+CP(250,315,"3","defPlayer")+CP(180,390,"4","defPlayer")+CP(320,390,"5","defPlayer"))},
+twoone:{t:"2-ON-1",s:"Ball handler attacks the defender. Teammate stays wide for the pass.",c:"“MAKE HIM CHOOSE!”",r:"ATTACK MIDDLE • PASS IF DEFENDER COMMITS",svg:fullCourt(CP(175,610,"1")+BALL(195,610)+CP(365,610,"2")+CP(250,300,"X","defPlayer")+MOVE(175,585,225,330)+MOVE(365,585,360,330)+PASS(225,330,360,330))},
+threeTwo:{t:"3-ON-2",s:"Run three lanes. Middle has the ball; wings stay wide.",c:"“THREE LANES!”",r:"WIDE • MIDDLE • WIDE → MAKE DEFENDERS CHOOSE",svg:fullCourt(CP(95,610,"2")+CP(250,610,"1")+BALL(270,610)+CP(405,610,"3")+CP(190,300,"X","defPlayer")+CP(310,300,"X","defPlayer")+MOVE(95,585,95,200)+MOVE(250,585,250,210)+MOVE(405,585,405,200))},
 blank:{t:"BLANK COURT",s:"Free draw anything.",c:"“DRAW IT.”",r:"USE YOUR FINGER OR MOUSE",svg:halfCourt("")}
 };
 
@@ -665,7 +690,7 @@ $("clipDraw").onclick=()=>{drawOn=!drawOn;canvas.classList.toggle("on",drawOn);$
 $("clipUndo").onclick=()=>{strokes.pop();redraw()};
 $("clipClear").onclick=()=>{strokes=[];redraw()};
 window.addEventListener("resize",()=>requestAnimationFrame(sizeCanvas));
-setPlay("helpball");
+setPlay("spots");
 render();
 })();
 </script>
